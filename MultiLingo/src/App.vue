@@ -5,66 +5,50 @@ import HelloWorld from './components/HelloWorld.vue'
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
+    <p>{{ $t("home.header") }}</p>
+    
   </header>
+  <div id="flags">
+    <img src="https://cdn.countryflags.com/thumbs/italy/flag-square-250.png" alt="italian">
+    <img src="https://cdn.countryflags.com/thumbs/france/flag-square-250.png" alt="french">
+    <img src="https://cdn.countryflags.com/thumbs/united-kingdom/flag-square-250.png" alt="uk">
+    <img src="https://cdn.countryflags.com/thumbs/germany/flag-square-250.png" alt="germany">
+  </div>
+  <p>{{ $t("home.choose_flag") }}</p>
 
-  <RouterView />
 </template>
 
 <style scoped>
-header {
+p{
   line-height: 1.5;
   max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
+  font-size: 25px;
   text-align: center;
-  margin-top: 2rem;
+  padding: 20px;
 }
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
+header{
+  margin-top: 3rem;
 }
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+img{
+  width: 100%;
 }
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+#flags{
+  display: grid;
+  grid-auto-flow: row;
+  grid-gap: 10px;
+  row-gap: 20px;
+  column-gap: 20px;
+  grid-template-rows: auto auto;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  padding: 40px;
 }
-
-nav a:first-of-type {
-  border: 0;
-}
-
+/*
 @media (min-width: 1024px) {
   header {
     display: flex;
     place-items: center;
     padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
   }
 
   header .wrapper {
@@ -82,4 +66,5 @@ nav a:first-of-type {
     margin-top: 1rem;
   }
 }
+*/
 </style>

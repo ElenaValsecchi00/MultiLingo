@@ -11,8 +11,8 @@ export default createI18n({
         about: "About"
       },
       home: {
-        header: "Welcome to the Vue 3 I18n tutorial!",
-        created_by: "This tutorial was brought to you by Lokalise."
+        header: "Welcome!",
+        choose_flag: "Choose the language you prefer"
       },
       about: {
         header: "About us"
@@ -24,8 +24,8 @@ export default createI18n({
           about: "About"
         },
         home: {
-          header: "benvenuti nel tutorial di Vue 3 I18n!",
-          created_by: "Il tutorial è offerto da Elena."
+          header: "Benvenuti!",
+          choose_flag: "Scegli la lingua che preferisci"
         },
         about: {
           header: "Su di noi(L'amore è una favola)"
@@ -34,31 +34,3 @@ export default createI18n({
     }
 })
 
-const messages = {
-    en: {
-      nav: {
-        home: "Home",
-        about: "About"
-      },
-      home: {
-        header: "Welcome to the Vue 3 I18n tutorial!",
-        created_by: "This tutorial was brought to you by Lokalise."
-      },
-      about: {
-        header: "About us"
-      }
-    },
-    it: {
-        nav: {
-          home: "Home",
-          about: "About"
-        },
-        home: {
-          header: "benvenuti nel tutprial di Vue 3 I18n!",
-          created_by: "Il tutorial è offerto da Lokalize."
-        },
-        about: {
-          header: "Su di noi"
-        }
-      }
-  }
