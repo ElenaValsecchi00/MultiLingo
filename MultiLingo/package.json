@@ -16,11 +16,13 @@
     "@capacitor/cli": "^6.0.0",
     "@capacitor/core": "^6.0.0",
     "@intlify/unplugin-vue-i18n": "^4.0.0",
+    "bootstrap-icons": "^1.11.3",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
     "vue-country-flag-next": "^2.3.2",
     "vue-i18n": "^9.13.1",
-    "vue-router": "^4.3.0"
+    "vue-router": "^4.3.0",
+    "vuetify": "^3.6.1"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
