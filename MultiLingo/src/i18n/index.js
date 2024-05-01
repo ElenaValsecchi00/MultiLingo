@@ -22,7 +22,25 @@ export default createI18n({
         language: {
           header: "Scegli il livello"
         }
+      },
+    ge: {
+      home: {
+        header: "Wilkommen!",
+        choose_flag: "Wählen Sie Ihre bevorzugte Sprache"
+      },
+        language: {
+          header: "Wählen Sie die Dringlichkeitsstufe"
+        }
+    },
+    fr: {
+      home: {
+        header: "Binevenue!",
+        choose_flag: "Choisissez la langue que vous préférez"
+      },
+        language: {
+          header: "Choisissez le niveau"
+        }
       }
-    }
+}
 })
 
