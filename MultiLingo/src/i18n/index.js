@@ -6,16 +6,12 @@ export default createI18n({
   legacy: false, // <--- 3
   messages: {
     en: {
-      nav: {
-        home: "Home",
-        about: "About"
-      },
       home: {
         header: "Welcome!",
         choose_flag: "Choose the language you prefer"
       },
-      about: {
-        header: "About us"
+      language: {
+        header: "Choose the level"
       }
     },
     it: {
@@ -23,12 +19,8 @@ export default createI18n({
           home: "Home",
           about: "About"
         },
-        home: {
-          header: "Benvenuti!",
-          choose_flag: "Scegli la lingua che preferisci"
-        },
-        about: {
-          header: "Su di noi(L'amore è una favola)"
+        language: {
+          header: "Scegli il livello"
         }
       }
     }
