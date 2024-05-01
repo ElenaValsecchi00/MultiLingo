@@ -15,10 +15,10 @@ export default createI18n({
       }
     },
     it: {
-        nav: {
-          home: "Home",
-          about: "About"
-        },
+      home: {
+        header: "Benvenuto/a!",
+        choose_flag: "Scegli la lingua che preferisci"
+      },
         language: {
           header: "Scegli il livello"
         }

@@ -1,6 +1,5 @@
 <script setup>
 import router from '../router'
-import { useRoute } from 'vue-router';
 
 //pass right language to levels
 function goToLanguage(route, flag){

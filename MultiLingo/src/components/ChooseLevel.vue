@@ -18,7 +18,7 @@ import router from '../router';
 import { useRoute } from 'vue-router';
 
 function get_flag(){return(useRoute().params.flag);} //returns the right flag
-function goBack(){router.push({name:'home'}).finally(console.log(useRoute().path));}
+function goBack(){router.push({name:'home'});}
 </script>
 
 <style scoped>
