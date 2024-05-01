@@ -1,4 +1,12 @@
 <script setup>
+import router from '../router'
+function goToLanguage(route, flag){
+    console.log(flag);
+    router.push({name:route, params:{flag}})
+}
+
+function it_flag (){ return("https://cdn.countryflags.com/thumbs/italy/flag-square-250.png");};
+function fr_flag (){ return("https://cdn.countryflags.com/thumbs/france/flag-square-250.png");}
 </script>
 
 <template>
@@ -7,8 +15,8 @@
     
   </header>
   <div id="flags">
-    <RouterLink to="levels"><img src="https://cdn.countryflags.com/thumbs/italy/flag-square-250.png" alt="italian"></RouterLink>
-    <button><img src="https://cdn.countryflags.com/thumbs/france/flag-square-250.png" alt="french"></button>
+    <button @click="goToLanguage('levels',it_flag())"><img :src="it_flag()" alt="italian"></button>
+    <button @click="goToLanguage('levels', fr_flag())"><img :src="fr_flag()" alt="french"></button>
     <button><img src="https://cdn.countryflags.com/thumbs/united-kingdom/flag-square-250.png" alt="uk"></button>
     <button><img src="https://cdn.countryflags.com/thumbs/germany/flag-square-250.png" alt="germany"></button>
   </div>
@@ -17,7 +25,14 @@
 </template>
 
 <style scoped>
-
+button{
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+}
 img{
   width: 100%;
 }
