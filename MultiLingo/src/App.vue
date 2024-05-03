@@ -16,6 +16,17 @@ import { useI18n } from 'vue-i18n'
 </template>
 
 <style scoped>
+
+@import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+html, body {
+  font-family: 'Jua', sans-serif;
+}
+
+#app {
+  font-family: 'Jua', sans-serif;
+}
+
+
 /*
 @media (min-width: 1024px) {
   header {

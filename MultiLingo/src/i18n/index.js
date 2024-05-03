@@ -11,7 +11,8 @@ export default createI18n({
         choose_flag: "Choose the language you prefer"
       },
       language: {
-        header: "Choose the level"
+        header: "Choose the level",
+        level: "Lev."
       }
     },
     it: {
@@ -20,7 +21,8 @@ export default createI18n({
         choose_flag: "Scegli la lingua che preferisci"
       },
         language: {
-          header: "Scegli il livello"
+          header: "Scegli il livello",
+          level: "Liv."
         }
       },
     ge: {
@@ -29,16 +31,18 @@ export default createI18n({
         choose_flag: "Wählen Sie Ihre bevorzugte Sprache"
       },
         language: {
-          header: "Wählen Sie die Dringlichkeitsstufe"
+          header: "Wählen Sie die Dringlichkeitsstufe",
+          level: "Eb."
         }
     },
     fr: {
       home: {
-        header: "Binevenue!",
+        header: "Bienvenue!",
         choose_flag: "Choisissez la langue que vous préférez"
       },
         language: {
-          header: "Choisissez le niveau"
+          header: "Choisissez le niveau",
+          level: "Niv."
         }
       }
 }

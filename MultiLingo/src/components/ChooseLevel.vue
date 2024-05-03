@@ -10,15 +10,50 @@
             <div><p id="title">{{ $t("language.header") }}</p></div>
         </div>
     </header>
+    <div id="levels">
+        <div class="ellipse">
+            <p>{{ $t("language.level") }}1</p>
+        </div>
+        
+        <div class="ellipse">
+            <p>{{ $t("language.level") }}2</p>
+        </div>
+        
+        <div class="ellipse">
+            <p>{{ $t("language.level") }}3</p>
+        </div>
+
+        <button @click="fetchData()"><p>{{message}}</p></button>
+    </div>
+    <div>
+
+    </div>
     <RouterView />
 </template>
 
 <script setup>
 import router from '../router';
 import { useRoute } from 'vue-router';
+import axios from 'axios';
+
 
 function get_flag(){return(useRoute().params.flag);} //returns the right flag
 function goBack(){router.push({name:'home'});}
+
+let message="";
+
+//Va messo nella pagina dei singoli livelli
+function fetchData() {
+      axios.get('http://localhost:5000')
+        .then(response => {
+          console.log(response.data);
+          // do something with response.data
+        })
+        .catch(error => {
+          console.error(error);
+        });
+}
+
 </script>
 
 <style scoped>
@@ -47,6 +82,23 @@ img{
     margin-left: 1cap;
 }
 
+.ellipse{
+    width: 88px;
+    height: 82px;
+    border-radius: 50%;
+    margin-bottom: 3cap;
+    margin-left:40%;
+    background: #C3E986;
+}
+
+.ellipse:nth-child(2){
+    background: #F3C581;
+}
+
+.ellipse:nth-child(3){
+    background: #E27676;
+}
+
 #title{
     margin-top: 3cap;
     position: absolute;
@@ -55,4 +107,7 @@ img{
     right:width/2;
 }
 
+#levels{
+    margin-top:20cap;
+}
 </style>

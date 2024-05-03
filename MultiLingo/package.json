@@ -16,6 +16,7 @@
     "@capacitor/cli": "^6.0.0",
     "@capacitor/core": "^6.0.0",
     "@intlify/unplugin-vue-i18n": "^4.0.0",
+    "axios": "^1.6.8",
     "bootstrap-icons": "^1.11.3",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
