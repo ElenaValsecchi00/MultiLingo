@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingPage from '../components/LandingPage.vue'
-
+import ChooseLevelPage from '../components/ChooseLevel.vue'
+import Ex1Page from '../components/Ex1.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -10,12 +11,14 @@ const router = createRouter({
       component: LandingPage
     },
     {
-      path: '/levels:flag',
+      path: '/levels/:language',
       name: 'levels',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../components/ChooseLevel.vue'),
+      component: ChooseLevelPage
+    },
+    {
+      path: '/:language/ex1',
+      name: 'ex1',
+      component: Ex1Page
     }
   ]
 })

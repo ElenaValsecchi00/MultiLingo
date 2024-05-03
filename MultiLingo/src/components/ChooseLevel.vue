@@ -6,24 +6,24 @@
                 <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
             </svg>
             </button>
-            <img :src="get_flag()" alt="flag">
+            <img :src="src" alt="flag">
             <div><p id="title">{{ $t("language.header") }}</p></div>
         </div>
     </header>
     <div id="levels">
-        <div class="ellipse">
+        <div class="ellipse" @click="goEx1()">
             <p>{{ $t("language.level") }}1</p>
         </div>
         
-        <div class="ellipse">
+        <div class="ellipse" @click="goEx1()">
             <p>{{ $t("language.level") }}2</p>
         </div>
         
-        <div class="ellipse">
+        <div class="ellipse" @click="goEx1()">
             <p>{{ $t("language.level") }}3</p>
         </div>
 
-        <button @click="fetchData()"><p>{{message}}</p></button>
+        <button @click="provaRedirect()"><p>{{message}}</p></button>
     </div>
     <div>
 
@@ -31,28 +31,33 @@
     <RouterView />
 </template>
 
-<script setup>
+<script>
 import router from '../router';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 
-
-function get_flag(){return(useRoute().params.flag);} //returns the right flag
-function goBack(){router.push({name:'home'});}
-
-let message="";
-
-//Va messo nella pagina dei singoli livelli
-function fetchData() {
-      axios.get('http://localhost:5000')
-        .then(response => {
-          console.log(response.data);
-          // do something with response.data
-        })
-        .catch(error => {
-          console.error(error);
-        });
-}
+export default{
+  data() {
+    return {
+      flag: null,
+      src: ""
+    };
+  },
+  created() {
+    // Accesso al parametro della route
+    this.flag = this.$route.params.language;
+    // Composizione della stringa utilizzando il parametro della route
+    this.src = '../../flags/' + this.flag + ".png";
+  },
+  methods: {
+    goBack(){
+        router.push({name:'home'});
+    },
+    goEx1(){
+        router.push({name:'ex1', params: this.flag});
+    }
+  }
+};
 
 </script>
 

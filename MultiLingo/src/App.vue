@@ -26,7 +26,6 @@ html, body {
   font-family: 'Jua', sans-serif;
 }
 
-
 /*
 @media (min-width: 1024px) {
   header {

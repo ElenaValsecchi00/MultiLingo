@@ -3,17 +3,10 @@ import i18n from '@/i18n';
 import router from '../router'
 
 //pass right language to levels
-function goToLanguage(route, flag,language){
+function goToLanguage(route,language){
   i18n.global.locale.value=language;
-  router.push({name:route, params:{flag}})
+  router.push({name:route, params:{language}})
 }
-
-//return right flag
-function it_flag (){ return("https://cdn.countryflags.com/thumbs/italy/flag-square-250.png");}
-function fr_flag (){ return("https://cdn.countryflags.com/thumbs/france/flag-square-250.png");}
-function ge_flag (){ return("https://cdn.countryflags.com/thumbs/germany/flag-square-250.png");}
-function uk_flag (){ return("https://cdn.countryflags.com/thumbs/united-kingdom/flag-square-250.png");}
-
 
 </script>
 
@@ -22,10 +15,10 @@ function uk_flag (){ return("https://cdn.countryflags.com/thumbs/united-kingdom/
     <p>{{ $t("home.header") }}</p>
   </header>
   <div id="flags">
-    <button @click="goToLanguage('levels',it_flag(),'it')"><img :src="it_flag()" alt="italian"></button>
-    <button @click="goToLanguage('levels', fr_flag(),'fr')"><img :src="fr_flag()" alt="french"></button>
-    <button @click="goToLanguage('levels',ge_flag(),'ge')"><img :src="ge_flag()" alt="german"></button>
-    <button @click="goToLanguage('levels', uk_flag(),'en')"><img :src="uk_flag()" alt="british"></button>
+    <button @click="goToLanguage('levels','it')"><img src="../../flags/it.png" alt="italian"></button>
+    <button @click="goToLanguage('levels','fr')"><img src="../../flags/fr.png" alt="french"></button>
+    <button @click="goToLanguage('levels','ge')"><img src="../../flags/ge.png" alt="german"></button>
+    <button @click="goToLanguage('levels','en')"><img src="../../flags/en.png" alt="british"></button>
   </div>
   <p>{{ $t("home.choose_flag") }}</p>
   <RouterView />

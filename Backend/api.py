@@ -17,7 +17,9 @@ def get_users():
     print("Using jsonify")
     users = [{'id': 1, 'username': 'sweety'},
              {'id': 2, 'username': 'pallavi'}]
-    return jsonify({'users': users})
+    response = jsonify({'users': users})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
  
  
 if __name__ == '__main__':

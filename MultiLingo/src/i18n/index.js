@@ -13,6 +13,11 @@ export default createI18n({
       language: {
         header: "Choose the level",
         level: "Lev."
+      },
+      assignment:{
+        header: "Complete the sentence",
+        phrase: "The cat is ... the table",
+        answers: ["on", "under"]
       }
     },
     it: {
@@ -23,6 +28,11 @@ export default createI18n({
         language: {
           header: "Scegli il livello",
           level: "Liv."
+        },
+        assignment:{
+          header: "Completa la frase",
+          phrase: "Il gatto è ... tavolo",
+          answers: ["sul", "sotto al"]
         }
       },
     ge: {
@@ -33,6 +43,11 @@ export default createI18n({
         language: {
           header: "Wählen Sie die Dringlichkeitsstufe",
           level: "Eb."
+        },
+        assignment:{
+          header: "Completa la frase",
+          phrase: "Il gatto è ... tavolo",
+          answers: ["sul", "sotto al"]
         }
     },
     fr: {
@@ -43,6 +58,11 @@ export default createI18n({
         language: {
           header: "Choisissez le niveau",
           level: "Niv."
+        },
+        assignment:{
+          header: "Complétez cette phrase",
+          phrase: "Le chat est ... la table",
+          answers: ["sur", "sous"]
         }
       }
 }
