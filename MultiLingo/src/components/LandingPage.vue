@@ -1,4 +1,4 @@
-<script setup>
+<script>
 import i18n from '@/i18n';
 import router from '../router'
 
@@ -7,7 +7,18 @@ function goToLanguage(route,language){
   i18n.global.locale.value=language;
   router.push({name:route, params:{language}})
 }
-
+export default {
+    data() {
+    },
+    created(){
+    },
+    methods: {
+        goToLanguage(route,language){
+            i18n.global.locale.value=language;
+        router.push({name:route, params:{language}})
+      }
+    }
+    };
 </script>
 
 <template>
@@ -25,6 +36,7 @@ function goToLanguage(route,language){
 </template>
 
 <style scoped>
+
 button{
     background-color: transparent;
     background-repeat: no-repeat;
@@ -33,6 +45,7 @@ button{
     overflow: hidden;
     outline: none;
 }
+
 header{
     margin-top: 3em;
 }
@@ -40,6 +53,7 @@ header{
 img{
   width: 100%;
 }
+
 #flags{
   display: grid;
   grid-auto-flow: row;
@@ -51,28 +65,5 @@ img{
   justify-content: center;
   padding: 40px;
 }
-/*
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-*/
 </style>

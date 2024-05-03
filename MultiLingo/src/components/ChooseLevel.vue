@@ -23,11 +23,8 @@
             <p>{{ $t("language.level") }}3</p>
         </div>
 
-        <button @click="provaRedirect()"><p>{{message}}</p></button>
     </div>
-    <div>
-
-    </div>
+    
     <RouterView />
 </template>
 
@@ -51,11 +48,12 @@ export default{
   },
   methods: {
     goBack(){
-        router.push({name:'home'});
+        router.go(-1);
     },
     goEx1(){
         router.push({name:'ex1', params: this.flag});
-    }
+    },
+    
   }
 };
 

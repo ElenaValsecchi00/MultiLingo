@@ -15,7 +15,7 @@ import { useI18n } from 'vue-i18n'
   <RouterView />
 </template>
 
-<style scoped>
+<style>
 
 @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
 html, body {
@@ -24,6 +24,17 @@ html, body {
 
 #app {
   font-family: 'Jua', sans-serif;
+}
+
+.back_button{
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    margin-top: 1cap;
+    margin-left: 1cap;
 }
 
 /*

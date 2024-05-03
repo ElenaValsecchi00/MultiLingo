@@ -17,7 +17,8 @@ export default createI18n({
       assignment:{
         header: "Complete the sentence",
         phrase: "The cat is ... the table",
-        answers: ["on", "under"]
+        answers: ["on", "under"],
+        confirm: "Confirm"
       }
     },
     it: {
@@ -32,7 +33,8 @@ export default createI18n({
         assignment:{
           header: "Completa la frase",
           phrase: "Il gatto è ... tavolo",
-          answers: ["sul", "sotto al"]
+          answers: ["sul", "sotto al"],
+          confirm: "Conferma"
         }
       },
     ge: {
@@ -47,7 +49,8 @@ export default createI18n({
         assignment:{
           header: "Completa la frase",
           phrase: "Il gatto è ... tavolo",
-          answers: ["sul", "sotto al"]
+          answers: ["sul", "sotto al"],
+          confirm: "Bestätigt"
         }
     },
     fr: {
@@ -62,7 +65,8 @@ export default createI18n({
         assignment:{
           header: "Complétez cette phrase",
           phrase: "Le chat est ... la table",
-          answers: ["sur", "sous"]
+          answers: ["sur", "sous"],
+          confirm: "Confirme"
         }
       }
 }
