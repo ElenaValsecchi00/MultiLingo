@@ -15,18 +15,14 @@
             <p>{{ $t("assignment.header") }}</p>
             <p>{{ this.phrase }}</p>
         </div>
-        <div>
-            <!--Fare il for sugli elementi-->
-            <p class="clickable-div" :class="{ 'clickable': selectedParagraph === 0 }"
-            @click="selectParagraph(0)">
-                {{ $t("assignment.answers.0") }}
+        <div class="options">
+            <div v-for="(name, index) in this.options">
+                <p class="clickable-div" :class="{ 'clickable': selectedParagraph === 0 }"
+                 @click="selectParagraph(index)">
+                {{ name }}
             </p>
-            <p class="clickable-div" :class="{ 'clickable': selectedParagraph === 1 }"
-            @click="selectParagraph(1)">
-                {{ $t("assignment.answers.1") }}
-            </p>
+            </div>
         </div>
-        
         <button class="buttonConferma" @click="sendLanguage()">{{ $t("assignment.confirm") }}</button>
         <!--
         <div>
@@ -51,7 +47,8 @@ export default {
         return {
             flag: null,
             selectedParagraph: null,
-            phrase: null
+            phrase: null,
+            options: null
         };
     },
     beforeCreate(){
@@ -67,11 +64,19 @@ export default {
     },
     methods: {  
         fetchPhrase(){
-        axios.get('http://localhost:5000/language')
+        axios.get('http://localhost:5000/ex1')
         .then(response => {
           console.log(response.data);
           // do something with response.data
-         this.phrase = response.data
+         let dict = response.data;
+         this.phrase = dict['phrase']
+         this.options = Object.keys(dict)
+        .filter((key) => key!=='phrase')
+        .reduce((obj, key) => {
+            return Object.assign(obj, {
+            [key]: dict[key]
+            });
+        }, {});
         })
         .catch(error => {
           console.error(error);
@@ -93,25 +98,34 @@ body{
     background-color: #FBF2D4;
 }
 
+.options{
+    overflow: scroll;
+}
+
 .buttonConferma {
+    position:absolute;
     width: 50%;
     height: 40px;
     text-align: center;
-    margin-left: 25%;
-    margin-top: 70%;
+    left: 0; 
+    right: 0; 
+    bottom:40px;
+    margin-left: auto; 
+    margin-right: auto; 
     background: #C3E986;
     border-radius: 10px;
     border-color: transparent;
 }
 
 .clickable-div {
-  padding: 20px;
+  padding: 5px;
   margin: 10px;
   border-radius: 10px;
   background-color: rgb(188, 224, 149);
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+
 .clickable {
     background-color: rgb(110, 229, 110);
 }
