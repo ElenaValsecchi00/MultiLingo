@@ -1,37 +1,44 @@
-<script setup>
-import i18n from '@/i18n';
-import router from '../router'
-
-//pass right language to levels
-function goToLanguage(route, flag,language){
-  i18n.global.locale.value=language;
-  router.push({name:route, params:{flag}})
-}
-
-//return right flag
-function it_flag (){ return("https://cdn.countryflags.com/thumbs/italy/flag-square-250.png");}
-function fr_flag (){ return("https://cdn.countryflags.com/thumbs/france/flag-square-250.png");}
-function ge_flag (){ return("https://cdn.countryflags.com/thumbs/germany/flag-square-250.png");}
-function uk_flag (){ return("https://cdn.countryflags.com/thumbs/united-kingdom/flag-square-250.png");}
-
-
-</script>
-
 <template>
   <header>
     <p>{{ $t("home.header") }}</p>
   </header>
   <div id="flags">
-    <button @click="goToLanguage('levels',it_flag(),'it')"><img :src="it_flag()" alt="italian"></button>
-    <button @click="goToLanguage('levels', fr_flag(),'fr')"><img :src="fr_flag()" alt="french"></button>
-    <button @click="goToLanguage('levels',ge_flag(),'ge')"><img :src="ge_flag()" alt="german"></button>
-    <button @click="goToLanguage('levels', uk_flag(),'en')"><img :src="uk_flag()" alt="british"></button>
+    <button @click="goToLanguage('levels','it')"><img src="../../flags/it.png" alt="italian"></button>
+    <button @click="goToLanguage('levels','fr')"><img src="../../flags/fr.png" alt="french"></button>
+    <button @click="goToLanguage('levels','ge')"><img src="../../flags/ge.png" alt="german"></button>
+    <button @click="goToLanguage('levels','en')"><img src="../../flags/en.png" alt="british"></button>
   </div>
   <p>{{ $t("home.choose_flag") }}</p>
   <RouterView />
 </template>
 
+<script>
+import i18n from '@/i18n';
+import router from '../router';
+import axios from 'axios';
+
+export default {
+    methods: {
+        goToLanguage(route,language){
+          i18n.global.locale.value=language;
+          this.sendLanguage(language);
+          router.push({name:route, params:{language}})
+      },
+      sendLanguage(language) {    
+        axios.post('http://localhost:5000/language', {language:language})
+        .then(response => { 
+            console.log(response)
+        })
+        .catch(error => {
+            console.log(error)
+        });
+        }
+    }
+    };
+</script>
+
 <style scoped>
+
 button{
     background-color: transparent;
     background-repeat: no-repeat;
@@ -40,6 +47,7 @@ button{
     overflow: hidden;
     outline: none;
 }
+
 header{
     margin-top: 3em;
 }
@@ -47,6 +55,7 @@ header{
 img{
   width: 100%;
 }
+
 #flags{
   display: grid;
   grid-auto-flow: row;
@@ -58,28 +67,5 @@ img{
   justify-content: center;
   padding: 40px;
 }
-/*
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-*/
 </style>
