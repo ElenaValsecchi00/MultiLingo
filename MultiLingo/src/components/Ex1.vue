@@ -27,7 +27,7 @@
             </p>
         </div>
         
-        <button class="buttonConferma" @click="fetchLanguage">{{ $t("assignment.confirm") }}</button>
+        <button class="buttonConferma" @click="sendLanguage()">{{ $t("assignment.confirm") }}</button>
         <!--
         <div>
             <b-progress :value="value" :max="max" show-progress animated></b-progress>
@@ -64,37 +64,9 @@ export default {
         },
         goBack(){
         router.go(-1);
-        },
-        sendData(){
-            axios.post('http://localhost:5000', {"key": i18n.global.locale.value})
-            .then(res=>{
-                console.log(res);
-            })
-        },
-        fetchLanguage(){axios.get('http://localhost:5000')
-        .then(response => {
-          console.log(response.data);
-          // do something with response.data
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    }
+        }
     }
     };
-/*
-//Va messo nella pagina dei singoli livelli
-function fetchData() {
-      axios.get('http://localhost:5000')
-        .then(response => {
-          console.log(response.data);
-          // do something with response.data
-        })
-        .catch(error => {
-          console.error(error);
-        });
-}
-*/
 </script>
 
 <style scoped>

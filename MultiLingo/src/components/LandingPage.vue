@@ -1,26 +1,3 @@
-<script>
-import i18n from '@/i18n';
-import router from '../router'
-
-//pass right language to levels
-function goToLanguage(route,language){
-  i18n.global.locale.value=language;
-  router.push({name:route, params:{language}})
-}
-export default {
-    data() {
-    },
-    created(){
-    },
-    methods: {
-        goToLanguage(route,language){
-            i18n.global.locale.value=language;
-        router.push({name:route, params:{language}})
-      }
-    }
-    };
-</script>
-
 <template>
   <header>
     <p>{{ $t("home.header") }}</p>
@@ -34,6 +11,31 @@ export default {
   <p>{{ $t("home.choose_flag") }}</p>
   <RouterView />
 </template>
+
+<script>
+import i18n from '@/i18n';
+import router from '../router';
+import axios from 'axios';
+
+export default {
+    methods: {
+        goToLanguage(route,language){
+          i18n.global.locale.value=language;
+          this.sendLanguage(language);
+          router.push({name:route, params:{language}})
+      },
+      sendLanguage(language) {    
+        axios.post('http://localhost:5000/language', {language:language})
+        .then(response => { 
+            console.log(response)
+        })
+        .catch(error => {
+            console.log(error)
+        });
+        }
+    }
+    };
+</script>
 
 <style scoped>
 

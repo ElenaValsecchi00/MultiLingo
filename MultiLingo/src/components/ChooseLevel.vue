@@ -51,9 +51,19 @@ export default{
         router.go(-1);
     },
     goEx1(){
+        this.fetchLanguage()
         router.push({name:'ex1', params: this.flag});
     },
-    
+    fetchLanguage(){
+        axios.get('http://localhost:5000/language')
+        .then(response => {
+          console.log("la lingua è:"+response.data);
+          // do something with response.data
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
   }
 };
 
