@@ -37,7 +37,7 @@ export default createI18n({
           confirm: "Conferma"
         }
       },
-    ge: {
+    de: {
       home: {
         header: "Wilkommen!",
         choose_flag: "Wählen Sie Ihre bevorzugte Sprache"
@@ -47,7 +47,7 @@ export default createI18n({
           level: "Eb."
         },
         assignment:{
-          header: "Completa la frase",
+          header: "vervollständigen sie den satz",
           phrase: "Il gatto è ... tavolo",
           answers: ["sul", "sotto al"],
           confirm: "Bestätigt"
