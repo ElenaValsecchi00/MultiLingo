@@ -7,14 +7,21 @@ from flask_cors import CORS
 import speech_recognition as sr
 from googletrans import Translator, constants
 from pprint import pprint
+import random
 import pyttsx3
 
+translator = Translator()
 language = ""
+ex1_phrases = ["il gatto è...tappeto","L'oca è...tavolo"]
 
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+def choose_and_translate():
+    phrase = ex1_phrases[random.randrange(0,2)]
+    translation = translator.translate(phrase,src="it", dest=language)
+    return translation.text
 
 @app.route('/')
 def get_users():
@@ -34,11 +41,11 @@ def language():
     return language
 
 @app.route("/language", methods=["GET"])
-def get_language():
-    print(language)
-    response = jsonify({'language': language})
+def get_phrase():
+    phrase = choose_and_translate()
+    response = jsonify({'phrase': phrase})
     response.headers.add('Access-Control-Allow-Origin', '*')
-    return language
+    return phrase
 
 
 
