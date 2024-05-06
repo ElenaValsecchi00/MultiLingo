@@ -13,7 +13,7 @@
         </header>
         <div>
             <p>{{ $t("assignment.header") }}</p>
-            <p>{{ $t("assignment.phrase") }}</p>
+            <p>{{ this.phrase }}</p>
         </div>
         <div>
             <!--Fare il for sugli elementi-->
@@ -45,20 +45,39 @@
   
 <script>
 import router from '@/router';
-import i18n from '@/i18n';
 import axios from "axios"
 export default {
     data() {
         return {
             flag: null,
-            selectedParagraph: null
+            selectedParagraph: null,
+            phrase: null
         };
+    },
+    beforeCreate(){
+        
     },
     created(){
         this.flag = this.$route.params.language;
         this.src = '../../flags/' + this.flag + ".png";
+        this.fetchPhrase();
     },
-    methods: {
+    mounted() {
+        
+    },
+    methods: {  
+        fetchPhrase(){
+        axios.get('http://localhost:5000/language')
+        .then(response => {
+          console.log(response.data);
+          // do something with response.data
+         this.phrase = response.data
+        })
+        .catch(error => {
+          console.error(error);
+        });
+        },
+
         selectParagraph(index) {
         this.selectedParagraph = this.selectedParagraph === index ? null : index;
         },
