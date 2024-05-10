@@ -34,10 +34,6 @@ def choose_and_translate():
     translation_phrase = translator.translate(phrase,src="en", dest=language)
     print(translation_phrase)
     translation_options = [str(translator.translate(i,src="en", dest=language).text) for i in options]
-    #to_code = language
-    #from_code = "en"
-    #translatedText = argostranslate.translate.translate(phrase, from_code, to_code)
-    #translation_options = [argostranslate.translate.translate(i,from_code, to_code) for i in options]
     return translation_phrase.text, translation_options
     
 @app.route('/')
@@ -66,7 +62,6 @@ def get_phrase():
     d['phrase']=phrase
     response = jsonify(d)
     return d
-
 
 if __name__ == '__main__':
     app.run()

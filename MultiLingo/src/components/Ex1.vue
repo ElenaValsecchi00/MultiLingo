@@ -7,7 +7,7 @@
                     <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
                 </svg>
                 </button>
-                <img :src="src" alt="flag">
+                <img :src="src" class="flag" alt="flag">
             </div>
             
         </header>
@@ -23,19 +23,15 @@
             </p>
             </div>
         </div>
-        <button class="buttonConferma" @click="sendLanguage()">{{ $t("assignment.confirm") }}</button>
-        <!-- barra progressi
-        <div>
-            <b-progress :value="value" :max="max" show-progress animated></b-progress>
-            <b-progress class="mt-2" :max="max" show-value>
-            <b-progress-bar :value="value * (6 / 10)" variant="success"></b-progress-bar>
-            <b-progress-bar :value="value * (2.5 / 10)" variant="warning"></b-progress-bar>
-            <b-progress-bar :value="value * (1.5 / 10)" variant="danger"></b-progress-bar>
-            </b-progress>
+        <button class="buttonAudio" @click="recordAudio()" :class="{'clickable': recording}">
+            <img  class="audioImg"  
+            :src="imageUrl">
+        </button>
 
-            <b-button class="mt-3" @click="randomValue">Click me</b-button>
-        </div>
-        -->
+
+        <button class="buttonConferma" @click="sendLanguage()">{{ $t("assignment.confirm") }}</button>
+    
+        
     </body>
 </template>
   
@@ -48,7 +44,9 @@ export default {
             flag: null,
             selectedParagraph: null,
             phrase: null,
-            options: null
+            options: null,
+            recording: false,
+            imageUrl: '../../micro/microphone.png'
         };
     },
 
@@ -86,6 +84,12 @@ export default {
 
         goBack(){
         router.go(-1);
+        },
+        
+        recordAudio(){
+            this.recording = true;
+            this.imageUrl= "../../micro/listening.png"
+            //add recording 
         }
     }
     };
@@ -114,7 +118,24 @@ body{
     border-radius: 10px;
     border-color: transparent;
 }
+.buttonAudio{
+    position:absolute;
+    width: 50%;
+    height: auto;
+    text-align: center;
+    left: 0; 
+    right: 0; 
+    bottom:100px;
+    margin-left: auto; 
+    margin-right: auto; 
+    background: #C3E986;
+    border-radius: 10px;
+    border-color: transparent;
 
+}
+.audioImg{
+    width:50%;
+}
 .clickable-div {
   padding: 5px;
   margin: 10px;
@@ -129,12 +150,13 @@ body{
     transform: scale(0.95);
     transition: transform 0.5s ease;
 }
+
 .container{
     position:relative;
     margin:0cap;
 }
 
-img{
+.flag{
     position:absolute;
     display: inline;
     width:10%;
