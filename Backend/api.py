@@ -12,7 +12,6 @@ import pyttsx3
 import argostranslate.package
 import argostranslate.translate
 
-
 translator = Translator(service_urls=['translate.googleapis.com'])
 language = ""
 lev1_phrases_wait = {"1":["Guarda questo gatto, è a strisce","Mia madre è una tra le insegnanti di inglese della scuola"]}
@@ -61,7 +60,8 @@ def get_phrase():
     d = {str(i):opt for (i,opt) in zip(range(len(options)),options)}
     d['phrase']=phrase
     response = jsonify(d)
-    return d
+    response.headers.add("Access-Control-Allow-Origin: *")
+    return response
 
 if __name__ == '__main__':
     app.run()

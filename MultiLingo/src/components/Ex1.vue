@@ -64,6 +64,7 @@ export default {
         .then(response => {
         // do something with response.data
          let dict = response.data;
+         console.log(dict)
          this.phrase = dict['phrase']
          this.options = Object.keys(dict)
         .filter((key) => key!=='phrase')
