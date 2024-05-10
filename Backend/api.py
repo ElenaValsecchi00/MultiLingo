@@ -9,23 +9,47 @@ from googletrans import Translator, constants
 from pprint import pprint
 import random
 import pyttsx3
+import argostranslate.package
+import argostranslate.translate
+
+
 
 translator = Translator()
 language = ""
-ex1_phrases = {"1":["Guarda ... gatto, è a strisce","Mia madre è ... tra le insegnanti di inglese della scuola"]}
-ex1_options = {"1":[("questo","questi","quelli"),("una","uno","la")]}
-
+lev1_phrases_wait = {"1":["Guarda questo gatto, è a strisce","Mia madre è una tra le insegnanti di inglese della scuola"]}
+lev1_options_wait = {"1":[("questo","questi","quelli"),("una","uno","la")]}
+lev1_phrases = {"1": ["My mother is a good hiker","I had the chicken pox when I was six", "Look at this cat, it is striped",
+                       "My mother is one amongst english teachers of the school"]}
+lev1_options = {"1":[("is", "are", "have"),("had", "was", "have"), ("this", "there", "these"), ("one", "a", "the")]}
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+to_code = language
+from_code = "en"
+
+
+# Download and install Argos Translate package
+argostranslate.package.update_package_index()
+available_packages = argostranslate.package.get_available_packages()
+package_to_install = next(
+    filter(
+        lambda x: x.from_code == from_code and x.to_code == to_code, available_packages
+    )
+)
+argostranslate.package.install_from_path(package_to_install.download())
+
+# Translate
+translatedText = argostranslate.translate.translate("Hello World", from_code, to_code)
+print(translatedText)
+
 #function that chooses the phrase and corresponding options and translate them in the right lanuage
 def choose_and_translate():
-    index = random.randrange(0,2)
-    phrase = ex1_phrases["1"][index]
-    options = ex1_options["1"][index]
-    translation_phrase = translator.translate(phrase,src="it", dest=language)
-    translation_options = [translator.translate(i,src="it", dest=language).text for i in options]
+    index = random.randrange(0,len(lev1_phrases["1"]))
+    phrase = lev1_phrases["1"][index]
+    options = lev1_options["1"][index]
+    translation_phrase = translator.translate(phrase,src="en", dest=language)
+    translation_options = [translator.translate(i,src="en", dest=language).text for i in options]
     return translation_phrase.text, translation_options
 
 @app.route('/')
@@ -50,6 +74,7 @@ def language():
 #get the text of exercise
 def get_phrase():
     phrase,options = choose_and_translate()
+    #dict key:number of option, value:parola
     d = {str(i):opt for (i,opt) in zip(range(len(options)),options)}
     d['phrase']=phrase
     response = jsonify(d)

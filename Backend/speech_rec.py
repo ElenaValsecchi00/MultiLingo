@@ -3,6 +3,15 @@ from googletrans import Translator, constants
 from pprint import pprint
 import pyttsx3
 
+import argostranslate.package
+import argostranslate.translate
+
+from_code = "en"
+to_code = "es"
+translatedText = argostranslate.translate.translate("Hello World", from_code, to_code)
+print(translatedText)
+
+
 rec = sr.Recognizer()
 mic = sr.Microphone()
 afile = sr.AudioFile('audio_files/rec5.wav')

@@ -51,9 +51,7 @@ export default {
             options: null
         };
     },
-    beforeCreate(){
-        
-    },
+
     created(){
         this.flag = this.$route.params.language;
         this.src = '../../flags/' + this.flag + ".png";
@@ -64,7 +62,7 @@ export default {
     },
     methods: {  
         fetchPhrase(){
-        axios.get('http://localhost:5000/ex1')
+        axios.get('http://127.0.0.1:5000/ex1')
         .then(response => {
           console.log(response.data);
           // do something with response.data
