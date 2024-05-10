@@ -3,22 +3,21 @@
 from flask import Flask, request
 from flask import  jsonify
 from flask_cors import CORS
+import time
 
 import speech_recognition as sr
 from googletrans import Translator, constants
 from pprint import pprint
 import random
+from random import shuffle
 import pyttsx3
-import argostranslate.package
-import argostranslate.translate
 
 translator = Translator(service_urls=['translate.googleapis.com'])
 language = ""
-lev1_phrases_wait = {"1":["Guarda questo gatto, è a strisce","Mia madre è una tra le insegnanti di inglese della scuola"]}
-lev1_options_wait = {"1":[("questo","questi","quelli"),("una","uno","la")]}
-lev1_phrases = {"1": ["My mother is a good hiker","I had the chicken pox when I was six", "Look at this cat, it is striped",
-                       "My mother is one amongst english teachers of the school"]}
-lev1_options = {"1":[("is", "are", "have"),("had", "was", "have"), ("this", "there", "these"), ("one", "a", "the")]}
+#key:ex, value = list of tuples (phrase, word possition of guessed word)
+lev1_phrases = {"1": [("My mother is a good hiker", 2),("Elena had the chicken pox when she was six",1), ("See this cat, it is striped",1),
+                       ("My mother is one amongst english teachers of the school",3)]}
+lev1_options = {"1":[("are", "have"),("was", "have"), ("there", "these"), ("a", "the")]}
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -28,12 +27,19 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 #function that chooses the phrase and corresponding options and translate them in the right lanuage
 def choose_and_translate():
     index = random.randrange(0,len(lev1_phrases["1"]))
-    phrase = lev1_phrases["1"][index]
+    phrase = lev1_phrases["1"][index][0]
+    right_option = lev1_phrases["1"][index][1]
     options = lev1_options["1"][index]
+    translation_options = [str(translator.translate(i,src="en", dest=language).text).lower() for i in options]
     translation_phrase = translator.translate(phrase,src="en", dest=language)
-    print(translation_phrase)
-    translation_options = [str(translator.translate(i,src="en", dest=language).text) for i in options]
-    return translation_phrase.text, translation_options
+    #split, substitute element with ... and recompose
+    translation_phrase=translation_phrase.text.split()
+    translation_options.append(translation_phrase[right_option])
+    shuffle(translation_options)
+    translation_phrase[right_option]="..."
+    translation_phrase = " ".join(translation_phrase)
+    
+    return translation_phrase, translation_options
     
 @app.route('/')
 def get_users():
@@ -60,7 +66,6 @@ def get_phrase():
     d = {str(i):opt for (i,opt) in zip(range(len(options)),options)}
     d['phrase']=phrase
     response = jsonify(d)
-    response.headers.add("Access-Control-Allow-Origin: *")
     return response
 
 if __name__ == '__main__':
