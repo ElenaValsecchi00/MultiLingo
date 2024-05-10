@@ -18,7 +18,7 @@ import { useI18n } from 'vue-i18n'
 <style>
 
 @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
-html, body {
+html, body, button {
   font-family: 'Jua', sans-serif;
 }
 

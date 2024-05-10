@@ -11,34 +11,13 @@
             </div>
             
         </header>
-        <div>
-            <p>{{ $t("assignment.header") }}</p>
-            <p>{{ this.phrase }}</p>
-        </div>
-        <div class="options">
-            <div v-for="(name, index) in this.options">
-                <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index }"
-                 @click="selectParagraph(index)">
-                {{ name }}
-            </p>
-            </div>
-        </div>
+        
         <button class="buttonConferma" @click="sendLanguage()">{{ $t("assignment.confirm") }}</button>
-        <!-- barra progressi
-        <div>
-            <b-progress :value="value" :max="max" show-progress animated></b-progress>
-            <b-progress class="mt-2" :max="max" show-value>
-            <b-progress-bar :value="value * (6 / 10)" variant="success"></b-progress-bar>
-            <b-progress-bar :value="value * (2.5 / 10)" variant="warning"></b-progress-bar>
-            <b-progress-bar :value="value * (1.5 / 10)" variant="danger"></b-progress-bar>
-            </b-progress>
-
-            <b-button class="mt-3" @click="randomValue">Click me</b-button>
-        </div>
-        -->
+      
     </body>
 </template>
-  
+
+
 <script>
 import router from '@/router';
 import axios from "axios"
@@ -62,9 +41,10 @@ export default {
     },
     methods: {  
         fetchPhrase(){
-        axios.get('http://127.0.0.1:5000/ex1')
+        axios.get('http://127.0.0.1:5000/ex3')
         .then(response => {
-        // do something with response.data
+          console.log(response.data);
+          // do something with response.data
          let dict = response.data;
          this.phrase = dict['phrase']
          this.options = Object.keys(dict)
@@ -83,7 +63,6 @@ export default {
         selectParagraph(index) {
         this.selectedParagraph = this.selectedParagraph === index ? null : index;
         },
-
         goBack(){
         router.go(-1);
         }
@@ -121,14 +100,14 @@ body{
   border-radius: 10px;
   background-color: rgb(188, 224, 149);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .clickable {
-    background-color: rgb(6, 148, 6);
-    transform: scale(0.95);
-    transition: transform 0.5s ease;
+    background-color: rgb(110, 229, 110);
 }
+
+
 .container{
     position:relative;
     margin:0cap;
@@ -143,4 +122,3 @@ img{
     margin-right: 1cap;
 }
 </style>
-

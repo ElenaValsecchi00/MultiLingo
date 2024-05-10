@@ -11,15 +11,15 @@
         </div>
     </header>
     <div id="levels">
-        <div class="ellipse" @click="goEx1()">
+        <div class="ellipse" @click="goEx(1)">
             <p>{{ $t("language.level") }}1</p>
         </div>
         
-        <div class="ellipse" @click="goEx1()">
+        <div class="ellipse" @click="goEx(2)">
             <p>{{ $t("language.level") }}2</p>
         </div>
         
-        <div class="ellipse" @click="goEx1()">
+        <div class="ellipse" @click="goEx(3)">
             <p>{{ $t("language.level") }}3</p>
         </div>
 
@@ -50,8 +50,8 @@ export default{
     goBack(){
         router.go(-1);
     },
-    goEx1(){
-        router.push({name:'ex1', params: this.flag});
+    goEx(i){
+        router.push({name:"ex" + i, params: this.flag});
     }
 }
 };
