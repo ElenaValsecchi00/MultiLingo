@@ -5,7 +5,7 @@
   <div id="flags">
     <button @click="goToLanguage('levels','it')"><img src="../../flags/it.png" alt="italian"></button>
     <button @click="goToLanguage('levels','fr')"><img src="../../flags/fr.png" alt="french"></button>
-    <button @click="goToLanguage('levels','de')"><img src="../../flags/ge.png" alt="german"></button>
+    <button @click="goToLanguage('levels','es')"><img src="../../flags/es.png" alt="spanish"></button>
     <button @click="goToLanguage('levels','en')"><img src="../../flags/en.png" alt="british"></button>
   </div>
   <p>{{ $t("home.choose_flag") }}</p>
