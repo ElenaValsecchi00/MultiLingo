@@ -16,8 +16,6 @@ export default createI18n({
       },
       assignment:{
         header: "Complete the sentence",
-        phrase: "The cat is ... the table",
-        answers: ["on", "under"],
         confirm: "Confirm"
       }
     },
@@ -32,25 +30,21 @@ export default createI18n({
         },
         assignment:{
           header: "Completa la frase",
-          phrase: "Il gatto è ... tavolo",
-          answers: ["sul", "sotto al"],
           confirm: "Conferma"
         }
       },
-    de: {
+    es: {
       home: {
-        header: "Wilkommen!",
-        choose_flag: "Wählen Sie Ihre bevorzugte Sprache"
+        header: "Bienvenido!",
+        choose_flag: "Selecciona el idioma que prefieres"
       },
         language: {
-          header: "Wählen Sie die Dringlichkeitsstufe",
-          level: "Eb."
+          header: "Selecciona el nivel",
+          level: "Niv."
         },
         assignment:{
-          header: "vervollständigen sie den satz",
-          phrase: "Il gatto è ... tavolo",
-          answers: ["sul", "sotto al"],
-          confirm: "Bestätigt"
+          header: "Completa la frase",
+          confirm: "Confirma"
         }
     },
     fr: {
@@ -64,8 +58,6 @@ export default createI18n({
         },
         assignment:{
           header: "Complétez cette phrase",
-          phrase: "Le chat est ... la table",
-          answers: ["sur", "sous"],
           confirm: "Confirme"
         }
       }
