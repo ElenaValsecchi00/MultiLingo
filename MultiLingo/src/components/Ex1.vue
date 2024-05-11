@@ -23,11 +23,12 @@
             </p>
             </div>
         </div>
+        <!--When pressed first time starts recording, when pressed second time stops-->
         <button class="buttonAudio" @click="recordAudio()" :class="{'clickable': recording}">
             <img  class="audioImg"  
             :src="imageUrl">
         </button>
-        <!--When pressed first time starts recording, when pressed second time stops-->
+        
         <button class="buttonConferma" @click="sendLanguage()">{{ $t("assignment.confirm") }}</button>
     
         
