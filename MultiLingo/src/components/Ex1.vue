@@ -27,8 +27,7 @@
             <img  class="audioImg"  
             :src="imageUrl">
         </button>
-
-
+        <!--When pressed first time starts recording, when pressed second time stops-->
         <button class="buttonConferma" @click="sendLanguage()">{{ $t("assignment.confirm") }}</button>
     
         
@@ -46,7 +45,8 @@ export default {
             phrase: null,
             options: null,
             recording: false,
-            imageUrl: '../../micro/microphone.png'
+            imageUrl: '../../micro/microphone.png',
+            recorder:null
         };
     },
 
@@ -86,20 +86,20 @@ export default {
         goBack(){
         router.go(-1);
         },
-        
+        //start or stops a recording depending on the state of the button
         recordAudio(){
-            this.recording = true;
-            this.imageUrl= "../../micro/listening.png"
-            const sleep = time => new Promise(resolve => setTimeout(resolve, time));
-
+            this.recording = (this.recording==true)?false:true;
+            this.imageUrl= "../../micro/listening.png";
             (async () => {
-            const recorder = await this.record();
-            recorder.start();
-            await sleep(3000);
-            const audio = await recorder.stop();
-            audio.play();
+            if(this.recording==true){
+                this.recorder = await this.record();
+                this.recorder.start();
+            }
+            else{const audio = await this.recorder.stop();
+            audio.play();}
             })();
         },
+        //function that provides start stop functionalities 
         record(){
             return new Promise(resolve => {
                 navigator.mediaDevices.getUserMedia({ audio: true })
