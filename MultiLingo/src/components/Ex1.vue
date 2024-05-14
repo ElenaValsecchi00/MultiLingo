@@ -123,7 +123,7 @@ export default {
                     return new Promise(resolve => {
                         mediaRecorder.addEventListener("stop", () => {
                         const audioBlob = new Blob(audioChunks);
-                        const audioFile = new File([wavBlob], "yourfilename.wav");
+                        const audioFile = new File([audioBlob], "yourfilename.wav");
                         const audioUrl = URL.createObjectURL(audioBlob);
                         const audio = new Audio(audioUrl);
                         const play = () => {
