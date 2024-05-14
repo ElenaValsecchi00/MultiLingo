@@ -109,7 +109,7 @@ export default {
             return new Promise(resolve => {
                 navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(stream => {
-                    const mediaRecorder = new WavRecorder();
+                    const mediaRecorder = new MediaRecorder(stream);
                     const audioChunks = [];
                     mediaRecorder.addEventListener("dataavailable", event => {
                     audioChunks.push(event.data);
