@@ -1,27 +1,33 @@
 # app.py
 
-from flask import Flask, request
+from flask import Flask, request, redirect, url_for
 from flask import  jsonify
 from flask_cors import CORS
-import time
+from werkzeug.utils import secure_filename
+from audio_converter2wav import AudioConverter2Wav
+import os
 
 import speech_recognition as sr
 from googletrans import Translator, constants
 from pprint import pprint
 import random
 from random import shuffle
-import pyttsx3
+import speech_recognition as sr
 
+rec = sr.Recognizer()
 translator = Translator(service_urls=['translate.googleapis.com'])
 language = ""
+
 #key:ex, value = list of tuples (phrase, word possition of guessed word)
 lev1_phrases = {"1": [("My mother is a good hiker", 2),("Elena had the chicken pox when she was six",1), ("See this cat, it is striped",1),
                        ("My mother is one amongst english teachers of the school",3)]}
 lev1_options = {"1":[("are", "have"),("was", "have"), ("there", "these"), ("a", "the")]}
+UPLOAD_FOLDER = 'audios'
+
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-#app.config['CORS_HEADERS'] = 'Access-Control-Allow-Origin: *'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 #function that chooses the phrase and corresponding options and translate them in the right lanuage
@@ -40,25 +46,34 @@ def choose_and_translate():
     translation_phrase = " ".join(translation_phrase)
     
     return translation_phrase, translation_options
-    
-@app.route('/')
-def get_users():
-    print("Using jsonify")
-    users = [{'id': 1, 'username': 'sweety'},
-             {'id': 2, 'username': 'pallavi'}]
-    response = jsonify({'users': users})
-    return users
 
+#funtion that takes an audio file and transcribe it
+def speech_to_text(audio):
+    audio_converter = AudioConverter2Wav(read_f='.webm')
+    audio = audio_converter.convert_files()
+    audio = sr.AudioFile(audio)
+    with audio as source:
+        audio = rec.record(audio)
+        try:
+            # recognize speech using Google Speech Recognition
+            value = rec.recognize_google(source, language=language)
+            return value
+        except sr.UnknownValueError:
+            print("Oops! Didn't catch that")
+            return None
+        except sr.RequestError as e:
+            print("Uh oh! Couldn't request results from Google Speech Recognition service; {0}".format(e))
+            return None
 
-@app.route("/ex1", methods=["POST"])
+@app.route("/", methods=["POST"])
 #post the language that the user has selected
-def getLanguage():
+def postLanguage():
     context = request.get_json(force=True)
     global language
     language = context["language"]
     return language
 
-@app.route("/ex1", methods=["GET"])
+@app.route("/lev1/ex1", methods=["GET"])
 #get the text of exercise
 def get_phrase():
     phrase,options = choose_and_translate()
@@ -67,6 +82,20 @@ def get_phrase():
     d['phrase']=phrase
     response = jsonify(d)
     return response
+
+@app.route("/lev1/ex1/audio", methods=["GET"])
+#get the text of exercise
+def get_audio():
+    #filename = secure_filename(request.args.get('yourfilename.wav'))       
+    text = speech_to_text(app.config['UPLOAD_FOLDER']+"/"+"yourfilename.wav")
+    return jsonify(text)
+
+@app.route("/lev1/ex1/audio", methods=["POST"])
+def post_audio():
+    file = request.files['audio']
+    filename = secure_filename(file.filename)
+    file.save(app.config['UPLOAD_FOLDER']+"/"+file.filename)
+    return redirect(url_for('get_audio', name=file.filename))
 
 if __name__ == '__main__':
     app.run()

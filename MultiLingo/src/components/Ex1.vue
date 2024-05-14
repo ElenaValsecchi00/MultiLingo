@@ -38,6 +38,7 @@
 <script>
 import router from '@/router';
 import axios from "axios"
+import { WavRecorder  } from "webm-to-wav-converter";
 export default {
     data() {
         return {
@@ -61,7 +62,7 @@ export default {
     },
     methods: {  
         fetchPhrase(){
-        axios.get('http://127.0.0.1:5000/ex1')
+        axios.get('http://127.0.0.1:5000/lev1/ex1')
         .then(response => {
         // do something with response.data
          let dict = response.data;
@@ -94,10 +95,13 @@ export default {
             (async () => {
             if(this.recording==true){
                 this.recorder = await this.record();
-                this.recorder.start();
             }
-            else{const audio = await this.recorder.stop();
-            audio.play();}
+            else{
+                const audio = await this.recorder.stop();
+                let formData = new FormData();
+                formData.set("audio", audio.audioFile);
+                this.sendAudio(formData);
+            }
             })();
         },
         //function that provides start stop functionalities 
@@ -105,9 +109,8 @@ export default {
             return new Promise(resolve => {
                 navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(stream => {
-                    const mediaRecorder = new MediaRecorder(stream);
+                    const mediaRecorder = new WavRecorder();
                     const audioChunks = [];
-
                     mediaRecorder.addEventListener("dataavailable", event => {
                     audioChunks.push(event.data);
                     });
@@ -116,17 +119,18 @@ export default {
                     mediaRecorder.start();
                     };
 
-                    const stop = () => {
+                    const stop = (wavBlob) => {
                     return new Promise(resolve => {
                         mediaRecorder.addEventListener("stop", () => {
                         const audioBlob = new Blob(audioChunks);
+                        const audioFile = new File([wavBlob], "yourfilename.wav");
                         const audioUrl = URL.createObjectURL(audioBlob);
                         const audio = new Audio(audioUrl);
                         const play = () => {
                             audio.play();
                         };
 
-                        resolve({ audioBlob, audioUrl, play });
+                        resolve({ audioBlob, audioUrl, play, audioFile });
                         });
 
                         mediaRecorder.stop();
@@ -135,6 +139,27 @@ export default {
 
                     resolve({ start, stop });
                 });
+            });
+        },
+        //handle send audio to api and the transcription
+        sendAudio(audioFile){
+            axios.post('http://127.0.0.1:5000/lev1/ex1/audio', audioFile)
+            .then(response => { 
+                console.log(response)
+                this.getTextfromAudio()
+            })
+            .catch(error => {
+                console.log(error)
+            });
+        },
+        getTextfromAudio()
+        {
+            axios.get('http://127.0.01:5000/lev1/ex1/audio')
+            .then(response => { 
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
             });
         },
         callback (msg) {
