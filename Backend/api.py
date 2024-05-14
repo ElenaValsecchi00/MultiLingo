@@ -4,7 +4,6 @@ from flask import Flask, request, redirect, url_for
 from flask import  jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-from audio_converter2wav import AudioConverter2Wav
 import os
 
 import speech_recognition as sr
@@ -49,8 +48,6 @@ def choose_and_translate():
 
 #funtion that takes an audio file and transcribe it
 def speech_to_text(audio):
-    audio_converter = AudioConverter2Wav(read_f='.webm')
-    audio = audio_converter.convert_files()
     audio = sr.AudioFile(audio)
     with audio as source:
         audio = rec.record(audio)
