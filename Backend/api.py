@@ -90,7 +90,6 @@ def get_audio():
 @app.route("/lev1/ex1/audio", methods=["POST"])
 def post_audio():
     file = request.files['audio']
-    filename = secure_filename(file.filename)
     file.save(app.config['UPLOAD_FOLDER']+"/"+file.filename)
     return redirect(url_for('get_audio', name=file.filename))
 

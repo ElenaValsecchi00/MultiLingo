@@ -38,6 +38,8 @@
 <script>
 import router from '@/router';
 import axios from "axios"
+import {FFmpeg} from '@ffmpeg/ffmpeg';
+
 export default {
     data() {
         return {
@@ -94,12 +96,15 @@ export default {
             (async () => {
             if(this.recording==true){
                 this.recorder = await this.record();
+                this.recorder.start();
             }
             else{
                 const audio = await this.recorder.stop();
+                audio.play();
                 let formData = new FormData();
                 formData.set("audio", audio.audioFile);
                 this.sendAudio(formData);
+                
             }
             })();
         },
@@ -118,18 +123,19 @@ export default {
                     mediaRecorder.start();
                     };
 
-                    const stop = (wavBlob) => {
+                    const stop = () => {
                     return new Promise(resolve => {
                         mediaRecorder.addEventListener("stop", () => {
                         const audioBlob = new Blob(audioChunks);
-                        const audioFile = new File([audioBlob], "yourfilename.wav");
+                        const audioWAVBlob = this.convertWebmToWAV(audioBlob);
+                        const audioFile = new File([audioWAVBlob], "yourfilename.wav");
                         const audioUrl = URL.createObjectURL(audioBlob);
                         const audio = new Audio(audioUrl);
                         const play = () => {
                             audio.play();
                         };
 
-                        resolve({ audioBlob, audioUrl, play, audioFile });
+                        resolve({ audioWAVBlob, audioUrl, play, audioFile });
                         });
 
                         mediaRecorder.stop();
@@ -140,6 +146,24 @@ export default {
                 });
             });
         },
+        //function that converts the webm audio blob to wav 
+        async convertWebmToWAV(webmBlob){
+            const ffmpeg = new FFmpeg();
+            await ffmpeg.load({ baseURL: 'node-modules/@ffmpeg/core@0.12.6/dist/umd'});
+
+            const inputName = 'input.webm';
+            const outputName = 'output.wav';
+
+            ffmpeg.FS('writeFile', inputName, await fetch(webmBlob).then((res) => res.arrayBuffer()));
+
+            await ffmpeg.run('-i', inputName, outputName);
+
+            const outputData = ffmpeg.FS('readFile', outputName);
+            const outputBlob = new Blob([outputData.buffer], { type: 'audio/wav' });
+
+            return outputBlob;
+        },  
+        
         //handle send audio to api and the transcription
         sendAudio(audioFile){
             axios.post('http://127.0.0.1:5000/lev1/ex1/audio', audioFile)
