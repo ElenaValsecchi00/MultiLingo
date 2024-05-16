@@ -12,6 +12,9 @@ from pprint import pprint
 import random
 from random import shuffle
 import speech_recognition as sr
+import os
+os.environ["IMAGEIO_FFMPEG_EXE"] = "/opt/homebrew/Cellar/ffmpeg/7.0_1/bin/ffmpeg"
+import moviepy.editor as moviepy
 
 rec = sr.Recognizer()
 translator = Translator(service_urls=['translate.googleapis.com'])
@@ -78,20 +81,24 @@ def get_phrase():
     d = {str(i):opt for (i,opt) in zip(range(len(options)),options)}
     d['phrase']=phrase
     response = jsonify(d)
+    response.headers["Access-Control-Allow-Origin"] = "*"
     return response
 
 @app.route("/lev1/ex1/audio", methods=["GET"])
 #get the text of exercise
 def get_audio():
     #filename = secure_filename(request.args.get('yourfilename.wav'))       
-    text = speech_to_text(app.config['UPLOAD_FOLDER']+"/"+"yourfilename.wav")
+    text = speech_to_text(app.config['UPLOAD_FOLDER']+"/"+"result.wav")
     return jsonify(text)
 
 @app.route("/lev1/ex1/audio", methods=["POST"])
 def post_audio():
     file = request.files['audio']
     file.save(app.config['UPLOAD_FOLDER']+"/"+file.filename)
-    return redirect(url_for('get_audio', name=file.filename))
+    clip = moviepy.VideoFileClip("Backend/audios/yourfilename.wav")
+    clip.audio.write_audiofile("Backend/audios/result.wav")
+
+    return redirect(url_for('get_audio', name="result.wav"))
 
 if __name__ == '__main__':
     app.run()
