@@ -24,7 +24,7 @@
             </div>
         </div>
         <!--When pressed first time starts recording, when pressed second time stops-->
-        <button class="buttonAudio" @click="getTorecordAudio()" :class="{'clickable': recording}">
+        <button class="buttonAudio" @click="startRecordAudio" :class="{'clickable': recording}">
             <img  class="audioImg"  
             :src="imageUrl">
         </button>
@@ -89,13 +89,23 @@ export default {
         router.go(-1);
         },
         //function that prompts backend to record and gets the speech to text
-        getTorecordAudio(){
+        startRecordAudio(){
             this.recording = true;
             this.imageUrl= "../../micro/listening.png";
+            axios.post('http://127.0.0.1:5000/lev1/ex1/audio')
+            .then(response => { 
+                this.stopRecordAudio()
+            })
+            .catch(error => {
+                console.log(error)
+            });
+        }, 
+        stopRecordAudio(){
+            this.recording = false;
             axios.get('http://127.0.0.1:5000/lev1/ex1/audio')
             .then(response => { 
-                console.log(response)
-                this.recording = false;
+                console.log(response.data)
+                
             })
             .catch(error => {
                 console.log(error)
