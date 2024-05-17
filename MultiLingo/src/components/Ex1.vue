@@ -99,11 +99,7 @@ export default {
             axios.post('http://127.0.0.1:5000/lev1/ex1/audio', {data: answer})
             .then(response => { 
                 console.log(response.data, answer)
-                if(response.data){
-                    this.stopRecordAudio()
-                }else{
-                    console.log("clicca l'opzione")
-                }
+                this.stopRecordAudio()
             })
             .catch(error => {
                 console.log(error)

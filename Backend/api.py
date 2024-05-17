@@ -20,7 +20,7 @@ audio = None
 expected_sen = ""
 
 #key:ex, value = list of tuples (phrase, word possition of guessed word)
-lev1_phrases = {"1": [("My mother is a good hiker", 2),("Elena had the chicken pox when she was six",1), ("See this cat, it is striped",1),
+lev1_phrases = {"1": [("My mother is a good hiker", 2),("Elena had chicken pox when she was six",1), ("See this cat, it is striped",1),
                        ("My mother is one amongst the english teachers of the school",3)]}
 lev1_options = {"1":[("are", "have"),("was", "have"), ("there", "these"), ("a", "the")]}
 UPLOAD_FOLDER = 'audios'
