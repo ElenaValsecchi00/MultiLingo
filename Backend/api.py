@@ -12,9 +12,7 @@ from pprint import pprint
 import random
 from random import shuffle
 import speech_recognition as sr
-import os
-os.environ["IMAGEIO_FFMPEG_EXE"] = "/opt/homebrew/Cellar/ffmpeg/7.0_1/bin/ffmpeg"
-import moviepy.editor as moviepy
+import ffmpeg
 
 rec = sr.Recognizer()
 translator = Translator(service_urls=['translate.googleapis.com'])
@@ -56,7 +54,7 @@ def speech_to_text(audio):
         audio = rec.record(audio)
         try:
             # recognize speech using Google Speech Recognition
-            value = rec.recognize_google(source, language=language)
+            value = rec.recognize_google(audio, language=language)
             return value
         except sr.UnknownValueError:
             print("Oops! Didn't catch that")
@@ -88,17 +86,19 @@ def get_phrase():
 #get the text of exercise
 def get_audio():
     #filename = secure_filename(request.args.get('yourfilename.wav'))       
-    text = speech_to_text(app.config['UPLOAD_FOLDER']+"/"+"result.wav")
+    text = speech_to_text(app.config['UPLOAD_FOLDER']+"/"+"new.wav")
     return jsonify(text)
 
 @app.route("/lev1/ex1/audio", methods=["POST"])
 def post_audio():
     file = request.files['audio']
     file.save(app.config['UPLOAD_FOLDER']+"/"+file.filename)
-    clip = moviepy.VideoFileClip("Backend/audios/yourfilename.wav")
-    clip.audio.write_audiofile("Backend/audios/result.wav")
+    file = convert_webm_to_wav(file)
+    text = get_audio()
+    return text
 
-    return redirect(url_for('get_audio', name="result.wav"))
+def convert_webm_to_wav(file):
+    return ffmpeg.input(app.config['UPLOAD_FOLDER']+"/"+file.filename).output(app.config['UPLOAD_FOLDER']+"/"+"new.wav").run()
 
 if __name__ == '__main__':
     app.run()
