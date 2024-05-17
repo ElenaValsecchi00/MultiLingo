@@ -15,11 +15,13 @@ import speech_recognition as sr
 
 rec = sr.Recognizer()
 translator = Translator(service_urls=['translate.googleapis.com'])
+mic = sr.Microphone()
 language = ""
+text_of_speech = ""
 
 #key:ex, value = list of tuples (phrase, word possition of guessed word)
 lev1_phrases = {"1": [("My mother is a good hiker", 2),("Elena had the chicken pox when she was six",1), ("See this cat, it is striped",1),
-                       ("My mother is one amongst english teachers of the school",3)]}
+                       ("My mother is one amongst the english teachers of the school",3)]}
 lev1_options = {"1":[("are", "have"),("was", "have"), ("there", "these"), ("a", "the")]}
 UPLOAD_FOLDER = 'audios'
 
@@ -37,6 +39,7 @@ def choose_and_translate():
     options = lev1_options["1"][index]
     translation_options = [str(translator.translate(i,src="en", dest=language).text).lower() for i in options]
     translation_phrase = translator.translate(phrase,src="en", dest=language)
+
     #split, substitute element with ... and recompose
     translation_phrase=translation_phrase.text.split()
     translation_options.append(translation_phrase[right_option])
@@ -46,14 +49,15 @@ def choose_and_translate():
     
     return translation_phrase, translation_options
 
-#funtion that takes an audio file and transcribe it
-def speech_to_text(audio):
-    audio = sr.AudioFile(audio)
-    with audio as source:
-        audio = rec.record(audio)
+#funtion that records an audio file and transcribe it
+def speech_to_text():
+    #audio = sr.AudioFile(audio)
+    with mic as source:
+        #audio = rec.record(audio)
+        audio = rec.listen(source)
         try:
             # recognize speech using Google Speech Recognition
-            value = rec.recognize_google(source, language=language)
+            value = rec.recognize_google(audio, language=language)
             return value
         except sr.UnknownValueError:
             print("Oops! Didn't catch that")
@@ -81,17 +85,11 @@ def get_phrase():
     return response
 
 @app.route("/lev1/ex1/audio", methods=["GET"])
-#get the text of exercise
-def get_audio():
-    #filename = secure_filename(request.args.get('yourfilename.wav'))       
-    text = speech_to_text(app.config['UPLOAD_FOLDER']+"/"+"yourfilename.wav")
-    return jsonify(text)
-
-@app.route("/lev1/ex1/audio", methods=["POST"])
-def post_audio():
-    file = request.files['audio']
-    file.save(app.config['UPLOAD_FOLDER']+"/"+file.filename)
-    return redirect(url_for('get_audio', name=file.filename))
+#record audio and get speech to text
+def record_audio():
+    global text_of_speech
+    text_of_speech = speech_to_text()
+    return jsonify(text_of_speech)
 
 if __name__ == '__main__':
     app.run()

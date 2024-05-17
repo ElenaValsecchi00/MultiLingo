@@ -24,7 +24,7 @@
             </div>
         </div>
         <!--When pressed first time starts recording, when pressed second time stops-->
-        <button class="buttonAudio" @click="recordAudio()" :class="{'clickable': recording}">
+        <button class="buttonAudio" @click="getTorecordAudio()" :class="{'clickable': recording}">
             <img  class="audioImg"  
             :src="imageUrl">
         </button>
@@ -67,7 +67,6 @@ export default {
         .then(response => {
         // do something with response.data
          let dict = response.data;
-         console.log(dict)
          this.phrase = dict['phrase']
          this.options = Object.keys(dict)
         .filter((key) => key!=='phrase')
@@ -89,102 +88,19 @@ export default {
         goBack(){
         router.go(-1);
         },
-        //start or stops a recording depending on the state of the button
-        recordAudio(){
-            this.recording = (this.recording==true)?false:true;
+        //function that prompts backend to record and gets the speech to text
+        getTorecordAudio(){
+            this.recording = true;
             this.imageUrl= "../../micro/listening.png";
-            (async () => {
-            if(this.recording==true){
-                this.recorder = await this.record();
-                this.recorder.start();
-            }
-            else{
-                const audio = await this.recorder.stop();
-                audio.play();
-                let formData = new FormData();
-                formData.set("audio", audio.audioFile);
-                this.sendAudio(formData);
-                
-            }
-            })();
-        },
-        //function that provides start stop functionalities 
-        record(){
-            return new Promise(resolve => {
-                navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(stream => {
-                    const mediaRecorder = new MediaRecorder(stream);
-                    const audioChunks = [];
-                    mediaRecorder.addEventListener("dataavailable", event => {
-                    audioChunks.push(event.data);
-                    });
-
-                    const start = () => {
-                    mediaRecorder.start();
-                    };
-
-                    const stop = () => {
-                    return new Promise(resolve => {
-                        mediaRecorder.addEventListener("stop", () => {
-                        const audioBlob = new Blob(audioChunks);
-                        const audioWAVBlob = this.convertWebmToWAV(audioBlob);
-                        const audioFile = new File([audioWAVBlob], "yourfilename.wav");
-                        const audioUrl = URL.createObjectURL(audioBlob);
-                        const audio = new Audio(audioUrl);
-                        const play = () => {
-                            audio.play();
-                        };
-
-                        resolve({ audioWAVBlob, audioUrl, play, audioFile });
-                        });
-
-                        mediaRecorder.stop();
-                    });
-                    };
-
-                    resolve({ start, stop });
-                });
-            });
-        },
-        //function that converts the webm audio blob to wav 
-        async convertWebmToWAV(webmBlob){
-            const ffmpeg = new FFmpeg();
-            await ffmpeg.load({ baseURL: 'node-modules/@ffmpeg/core@0.12.6/dist/umd'});
-
-            const inputName = 'input.webm';
-            const outputName = 'output.wav';
-
-            ffmpeg.FS('writeFile', inputName, await fetch(webmBlob).then((res) => res.arrayBuffer()));
-
-            await ffmpeg.run('-i', inputName, outputName);
-
-            const outputData = ffmpeg.FS('readFile', outputName);
-            const outputBlob = new Blob([outputData.buffer], { type: 'audio/wav' });
-
-            return outputBlob;
-        },  
-        
-        //handle send audio to api and the transcription
-        sendAudio(audioFile){
-            axios.post('http://127.0.0.1:5000/lev1/ex1/audio', audioFile)
+            axios.get('http://127.0.0.1:5000/lev1/ex1/audio')
             .then(response => { 
                 console.log(response)
-                this.getTextfromAudio()
+                this.recording = false;
             })
             .catch(error => {
                 console.log(error)
             });
-        },
-        getTextfromAudio()
-        {
-            axios.get('http://127.0.01:5000/lev1/ex1/audio')
-            .then(response => { 
-                console.log(response)
-            })
-            .catch(error => {
-                console.log(error)
-            });
-        },
+        }, 
         callback (msg) {
             console.debug('Event: ', msg)
         }
