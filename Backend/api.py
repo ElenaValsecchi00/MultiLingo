@@ -9,9 +9,10 @@ from googletrans import Translator
 import random
 from random import shuffle
 
-rec = sr.Recognizer()
+
 translator = Translator(service_urls=['translate.googleapis.com'])
-mic = sr.Microphone()
+rec = sr.Recognizer()
+
 language = ""
 audio = None
 
@@ -30,14 +31,15 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 #function that chooses the phrase and corresponding options and translate them in the right lanuage
 def choose_and_translate():
     index = random.randrange(0,len(lev1_phrases["1"]))
-    phrase = lev1_phrases["1"][index][0]
+    phrase = lev1_phrases["1"][index][0] 
     right_option = lev1_phrases["1"][index][1]
     options = lev1_options["1"][index]
     translation_options = [str(translator.translate(i,src="en", dest=language).text).lower() for i in options]
     translation_phrase = translator.translate(phrase,src="en", dest=language)
-
     #split, substitute element with ... and recompose
     translation_phrase=translation_phrase.text.split()
+    global right_answer
+    right_answer = translation_phrase[right_option]
     translation_options.append(translation_phrase[right_option])
     shuffle(translation_options)
     translation_phrase[right_option]="..."
@@ -45,13 +47,17 @@ def choose_and_translate():
     
     return translation_phrase, translation_options
 
-#funtion that records an audio file 
+#function that records an audio file 
 def record():
+    mic = sr.Microphone()
+    
     with mic as source:
         rec.adjust_for_ambient_noise(source)
         global audio
-        audio = rec.listen(source, timeout=1000, phrase_time_limit=10000)
-#transcribes de audio file
+        audio = rec.listen(source, timeout=1000, phrase_time_limit=12000)
+    return audio
+
+#function that transcribes the audio file
 def speech_to_text(audio):      
     try:
         # recognize speech using Google Speech Recognition
@@ -80,20 +86,34 @@ def get_phrase():
     d = {str(i):opt for (i,opt) in zip(range(len(options)),options)}
     d['phrase']=phrase
     response = jsonify(d)
+    response.headers["Access-Control-Allow-Origin"] = "*"
     return response
-
-@app.route("/lev1/ex1/audio", methods=["GET"])
-#speech to text
-def textify_audio():
-    text_of_speech = speech_to_text(audio)
-    return jsonify(text_of_speech)
 
 @app.route("/lev1/ex1/audio", methods=["POST"])
 #record audio
 def record_audio():
     global audio
+    global score
+    data = request.get_json()
+    print(data["data"], right_answer)
     audio = record()
-    return jsonify("success:ok")
+    return jsonify(True) if(data["data"] == right_answer) else jsonify(False)
+    #return data
 
+@app.route("/lev1/ex1/audio", methods=["GET"])
+#speech to text
+def textify_audio():
+    text_of_speech = speech_to_text(audio)
+    options = text_of_speech.split()
+    try:
+        if (right_answer in options):
+            response = jsonify(True)
+            response.headers["Access-Control-Allow-Origin"] = "*"
+            return response
+        else: return jsonify(False)
+    except sr.UnknownValueError:
+        print("Oops! Didn't catch that")
+        return jsonify("Oops! Didn't catch that")
+      
 if __name__ == '__main__':
     app.run()

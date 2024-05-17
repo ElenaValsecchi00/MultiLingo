@@ -9,12 +9,18 @@
                 </button>
                 <img :src='src' class="flag" alt="flag">
             </div>
-            
+            <button class="buttonAudio" @click="startListening()" :class="{'clickable': listening}">
+            <img  class="audioImg"  
+            :src="listening ? imageListening : imageNotListening">
+            </button>
         </header>
+        
+        
         <div>
             <p>{{ $t("assignment.header") }}</p>
             <p>{{ this.phrase }}</p>
         </div>
+
         <div class="options">
             <div v-for="(name, index) in this.options">
                 <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index }"
@@ -24,14 +30,9 @@
             </div>
         </div>
         <!--When pressed first time starts recording, when pressed second time stops-->
-        <button class="buttonAudio" :disabled="disabledMic" @click="startRecordAudio" :class="{'clickable': recording}">
-            <img  class="audioImg"  
-            :src="recording ? imageRecording : imageNotRecording">
-        </button>
         
         <button class="buttonConferma" :disabled="disabledConfirm" @click="goOn()">{{ $t("assignment.confirm") }}</button>
     
-        
     </body>
 </template>
   
@@ -46,11 +47,9 @@ export default {
             selectedParagraph: null,
             phrase: null,
             options: null,
-            recording: false,
-            imageNotRecording: '../../micro/microphone.png',
-            imageRecording: '../../micro/listening.png',
-            recorder:null,
-            disabledMic: true,
+            listening: false,
+            imageNotListening: '../../audio/volumedown.png',
+            imageListening: '../../audio/volumeup.png',
             disabledConfirm: true,
             score: 0
         };
@@ -83,49 +82,18 @@ export default {
           console.error(error);
         });
         },
-
         selectParagraph(index) {
         this.selectedParagraph = this.selectedParagraph === index ? null : index;
-        this.disabledMic = this.selectedParagraph === null? true : false;
+        this.disabledConfirm = this.selectedParagraph === null? true : false;
         },
-
+        startListening(){
+            this.listening = this.listening === false? true : false;
+        },
         goBack(){
         router.go(-1);
         },
-        //function that prompts backend to record and gets the speech to text
-        startRecordAudio(){
-            this.recording = true;
-            const answer = this.options[this.selectedParagraph]
-            axios.post('http://127.0.0.1:5000/lev1/ex1/audio', {data: answer})
-            .then(response => { 
-                console.log(response.data, answer)
-                if(response.data){
-                    this.stopRecordAudio()
-                }else{
-                    console.log("clicca l'opzione")
-                }
-            })
-            .catch(error => {
-                console.log(error)
-            });
-        }, 
-        stopRecordAudio(){
-            this.recording = false;
-            axios.get('http://127.0.0.1:5000/lev1/ex1/audio')
-            .then(response => { 
-                console.log(response.data)
-                if(response.data){
-                    console.log("tutto corretto")
-                    this.score += 1
-                }
-                this.disabledConfirm = false
-            })
-            .catch(error => {
-                console.log(error)
-            });
-        },
         goOn(){
-            router.push({name:"ex1/1", params: this.flag})
+            router.push({name:"ex1/2", params: this.flag})
         }
     }
     };
@@ -160,10 +128,7 @@ body{
     background-color: rgba(172, 160, 160, 0.806);
     cursor: not-allowed;
 }
-.buttonAudio:disabled{
-    background-color: rgba(172, 160, 160, 0.806);
-    cursor: not-allowed;
-}
+
 .buttonAudio{
     position:absolute;
     width: 50%;
