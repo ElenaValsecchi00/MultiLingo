@@ -6,8 +6,10 @@ from flask_cors import CORS
 
 import speech_recognition as sr
 from googletrans import Translator
+
 import random
 from random import shuffle
+from Levenshtein import distance
 
 
 translator = Translator(service_urls=['translate.googleapis.com'])
@@ -15,6 +17,7 @@ rec = sr.Recognizer()
 
 language = ""
 audio = None
+expected_sen = ""
 
 #key:ex, value = list of tuples (phrase, word possition of guessed word)
 lev1_phrases = {"1": [("My mother is a good hiker", 2),("Elena had the chicken pox when she was six",1), ("See this cat, it is striped",1),
@@ -27,6 +30,11 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+#computes the similarity between the expected sentence and the pronunciated one
+def is_sentence_correct(actual_sen):
+    dist = distance(expected_sen,actual_sen)
+    return dist < 5
+
 
 #function that chooses the phrase and corresponding options and translate them in the right lanuage
 def choose_and_translate():
@@ -36,6 +44,8 @@ def choose_and_translate():
     options = lev1_options["1"][index]
     translation_options = [str(translator.translate(i,src="en", dest=language).text).lower() for i in options]
     translation_phrase = translator.translate(phrase,src="en", dest=language)
+    global expected_sen
+    expected_sen = translation_phrase.text
     #split, substitute element with ... and recompose
     translation_phrase=translation_phrase.text.split()
     global right_answer
@@ -54,7 +64,7 @@ def record():
     with mic as source:
         rec.adjust_for_ambient_noise(source)
         global audio
-        audio = rec.listen(source, timeout=1000, phrase_time_limit=12000)
+        audio = rec.listen(source, timeout=3000)
     return audio
 
 #function that transcribes the audio file
@@ -95,7 +105,6 @@ def record_audio():
     global audio
     global score
     data = request.get_json()
-    print(data["data"], right_answer)
     audio = record()
     return jsonify(True) if(data["data"] == right_answer) else jsonify(False)
     #return data
@@ -106,7 +115,9 @@ def textify_audio():
     text_of_speech = speech_to_text(audio)
     options = text_of_speech.split()
     try:
-        if (right_answer in options):
+        #check if word has been pronounced correctly
+        print(options)
+        if is_sentence_correct(text_of_speech):
             response = jsonify(True)
             response.headers["Access-Control-Allow-Origin"] = "*"
             return response
