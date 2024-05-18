@@ -15,7 +15,8 @@ export default createI18n({
         level: "Lev."
       },
       assignment:{
-        header: "Complete the sentence",
+        header_1_1: "Complete the sentence",
+        header_1_3: "Listen and recreate the sentence",
         confirm: "Confirm"
       }
     },
@@ -29,7 +30,8 @@ export default createI18n({
           level: "Liv."
         },
         assignment:{
-          header: "Completa la frase",
+          header_1_1: "Completa la frase",
+          header_1_3: "Ascolta e ricrea la frase",
           confirm: "Conferma"
         }
       },
@@ -43,7 +45,8 @@ export default createI18n({
           level: "Niv."
         },
         assignment:{
-          header: "Completa la frase",
+          header_1_1: "Completa la frase",
+          header_1_3: "Escucha y recrea la frase",
           confirm: "Confirma"
         }
     },
@@ -57,7 +60,8 @@ export default createI18n({
           level: "Niv."
         },
         assignment:{
-          header: "Complétez cette phrase",
+          header_1_1: "Complétez cette phrase",
+          header_1_3: "Écoutez et recréez la phrase",
           confirm: "Confirme"
         }
       }

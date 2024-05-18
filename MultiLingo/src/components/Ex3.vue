@@ -8,10 +8,19 @@
                 </svg>
                 </button>
                 <img :src="src" alt="flag">
-            </div>
-            
+            </div>      
         </header>
-        
+        <div>
+            <p>{{ $t("assignment.header_1_3") }}</p>
+        </div>
+        <div class="options">
+            <div v-for="(name, index) in this.options">
+                <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index }"
+                 @click="selectParagraph(index)">
+                {{ name }}
+            </p>
+            </div>
+        </div>
         <button class="buttonConferma" @click="sendLanguage()">{{ $t("assignment.confirm") }}</button>
       
     </body>
@@ -41,7 +50,7 @@ export default {
     },
     methods: {  
         fetchPhrase(){
-        axios.get('http://127.0.0.1:5000/ex3')
+        axios.get('http://127.0.0.1:5000/lev1/ex3')
         .then(response => {
           console.log(response.data);
           // do something with response.data
@@ -76,7 +85,9 @@ body{
 }
 
 .options{
-    overflow: scroll;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .buttonConferma {
@@ -95,6 +106,7 @@ body{
 }
 
 .clickable-div {
+  width: fit-content;
   padding: 5px;
   margin: 10px;
   border-radius: 10px;

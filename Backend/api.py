@@ -19,10 +19,15 @@ language = ""
 audio = None
 expected_sen = ""
 
-#key:ex, value = list of tuples (phrase, word possition of guessed word)
+#key:ex, value = list of tuples (phrase, word position of guessed word) for ex 1, for ex 3 (phrase)
 lev1_phrases = {"1": [("My mother is a good hiker", 2),("Elena had chicken pox when she was six",1), ("See this cat, it is striped",1),
-                       ("My mother is one amongst the english teachers of the school",3)]}
-lev1_options = {"1":[("are", "have"),("was", "have"), ("there", "these"), ("a", "the")]}
+                       ("My mother is one amongst the english teachers of the school",3)],
+                "3":[("life is full of crossroades, isn't it boy"),("I have been in this queue for ages, I am going to loose track of time"),
+                     ("are you kidding me? You can not be only 30 years old!")]}
+lev1_options = {"1":[("are", "have"),("was", "have"), ("there", "these"), ("a", "the")],
+                "3":[("life", "is", "full", "of","crossroades", ",", "isn't", "it", "boy", "toy", "are", "fool", "you"),
+                     ("I", "have", "been", "in" ,"this", "queue", "for", "ages",",", "I", "am", "going" ,"to" ,"loose" ,"track" ,"of", "time", "mine", "of", "these","fude"),
+                     ("are", "you", "kidding", "me", "?", "You", "can", "not", "be", "only", "30", "years", "old","!", "20", "could", "pounding", "lonely", "solely", "were", "He")]}
 UPLOAD_FOLDER = 'audios'
 
 app = Flask(__name__)
@@ -35,26 +40,35 @@ def is_sentence_correct(actual_sen):
     dist = distance(expected_sen,actual_sen)
     return dist < 5
 
-
-#function that chooses the phrase and corresponding options and translate them in the right lanuage
-def choose_and_translate():
-    index = random.randrange(0,len(lev1_phrases["1"]))
-    phrase = lev1_phrases["1"][index][0] 
-    right_option = lev1_phrases["1"][index][1]
-    options = lev1_options["1"][index]
-    translation_options = [str(translator.translate(i,src="en", dest=language).text).lower() for i in options]
-    translation_phrase = translator.translate(phrase,src="en", dest=language)
-    global expected_sen
-    expected_sen = translation_phrase.text
-    #split, substitute element with ... and recompose
+#split, substitute element with ... and recompose
+def substitute_with_blank(translation_phrase, translation_options, right_option):
     translation_phrase=translation_phrase.text.split()
+    translation_options.append(translation_phrase[right_option])
+    #set the right answer as phrase
     global right_answer
     right_answer = translation_phrase[right_option]
-    translation_options.append(translation_phrase[right_option])
     shuffle(translation_options)
     translation_phrase[right_option]="..."
     translation_phrase = " ".join(translation_phrase)
+    return translation_phrase, translation_options
     
+#function that chooses the phrase and corresponding options and translate them in the right lanuage
+def choose_and_translate(phrase_list,options_list, ex):
+    index = random.randrange(0,len(phrase_list[ex]))
+    phrase = phrase_list[ex][index][0] 
+    options = options_list[ex][index]
+    translation_options = [str(translator.translate(i,src="en", dest=language).text).lower() for i in options]
+    translation_phrase = translator.translate(phrase,src="en", dest=language)
+    #sets the expected sentence to be guessed by the user
+    global expected_sen
+    expected_sen = translation_phrase.text
+    #depending on the level gives out the right phrase and options
+    if ex=="1":
+        right_option = phrase_list[ex][index][1]
+        translation_phrase, translation_options= substitute_with_blank(translation_phrase, translation_options, right_option)
+    if ex=="3":
+        shuffle(translation_options)
+        translation_phrase = translation_phrase.text
     return translation_phrase, translation_options
 
 #function that records an audio file 
@@ -64,7 +78,7 @@ def record():
     with mic as source:
         rec.adjust_for_ambient_noise(source)
         global audio
-        audio = rec.listen(source, timeout=3000)
+        audio = rec.listen(source, timeout=3000, phrase_time_limit=20000)
     return audio
 
 #function that transcribes the audio file
@@ -90,8 +104,8 @@ def postLanguage():
 
 @app.route("/lev1/ex1", methods=["GET"])
 #get the text of exercise
-def get_phrase():
-    phrase,options = choose_and_translate()
+def get_phrase_ex1():
+    phrase,options = choose_and_translate(lev1_phrases,lev1_options,"1")
     #dict key:number of option, value:parola
     d = {str(i):opt for (i,opt) in zip(range(len(options)),options)}
     d['phrase']=phrase
@@ -125,6 +139,16 @@ def textify_audio():
     except sr.UnknownValueError:
         print("Oops! Didn't catch that")
         return jsonify("Oops! Didn't catch that")
+    
+@app.route("/lev1/ex3", methods=["GET"])
+def get_phrase_ex3():
+    phrase,options = choose_and_translate(lev1_phrases,lev1_options,"3")
+    print(phrase, options)
+    d = {str(i):opt for (i,opt) in zip(range(len(options)),options)}
+    d['phrase']=phrase
+    response = jsonify(d)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
       
 if __name__ == '__main__':
     app.run()

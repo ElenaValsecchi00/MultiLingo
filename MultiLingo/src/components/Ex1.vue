@@ -12,7 +12,7 @@
             
         </header>
         <div>
-            <p>{{ $t("assignment.header") }}</p>
+            <p>{{ $t("assignment.header_1_1") }}</p>
             <p>{{ this.phrase }}</p>
         </div>
         <div class="options">
