@@ -155,7 +155,7 @@ def get_phrase_ex3():
 def prononuce_phrase():
     #pronounce the sentence
     engine = pyttsx3.init()
-    engine.setProperty('rate', 100)
+    engine.setProperty('rate', 150)
     engine.say(expected_sen)
     engine.runAndWait()
     return jsonify("success")

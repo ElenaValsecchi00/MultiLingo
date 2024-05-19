@@ -95,11 +95,12 @@ export default {
         router.go(-1);
         },
         startListenAudio(){
-            this.recording = true;
+            this.speaking = true;
             //Actually pornounce sentence
             axios.get('http://127.0.0.1:5000/lev1/ex3/audio')
             .then(response => {
                 console.log(response.data)
+                this.speaking= false;
             })
             .catch(error => {
                 console.error(error);
