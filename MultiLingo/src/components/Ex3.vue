@@ -13,6 +13,11 @@
         <div>
             <p>{{ $t("assignment.header_1_3") }}</p>
         </div>
+        <!--When pressed first time starts recording, when pressed second time stops-->
+        <button class="buttonAudio" :disabled="disabledMic" @click="startListenAudio" :class="{'clickable': listening}">
+            <img  class="audioImg"  
+            :src="speaking ? imageSpeaking : imageNotSpeaking">
+        </button>
         <div class="options">
             <div v-for="(name, index) in this.options">
                 <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index }"
@@ -36,7 +41,10 @@ export default {
             flag: null,
             selectedParagraph: null,
             phrase: null,
-            options: null
+            options: null,
+            speaking: false,
+            imageNotSpeaking: '../../speaker/speaker.jpg',
+            imageSpeaking: '../../speaker/speaker-talking.jpg'
         };
     },
 
@@ -74,6 +82,10 @@ export default {
         },
         goBack(){
         router.go(-1);
+        },
+        startListenAudio(){
+            this.recording = true;
+            //Actually pornounce sentence
         }
     }
     };

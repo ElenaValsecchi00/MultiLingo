@@ -19,15 +19,15 @@ language = ""
 audio = None
 expected_sen = ""
 
-#key:ex, value = list of tuples (phrase, word position of guessed word) for ex 1, for ex 3 (phrase)
+#key:ex, value = list of tuples (phrase, word position of guessed word) for ex 1, for ex 3 (phrase,None)
 lev1_phrases = {"1": [("My mother is a good hiker", 2),("Elena had chicken pox when she was six",1), ("See this cat, it is striped",1),
                        ("My mother is one amongst the english teachers of the school",3)],
-                "3":[("life is full of crossroades, isn't it boy"),("I have been in this queue for ages, I am going to loose track of time"),
-                     ("are you kidding me? You can not be only 30 years old!")]}
+                "3":[("life is full of crossroades",None),("I have been in this queue for ages",None),
+                     ("are you joking? This can not be real!",None)]}
 lev1_options = {"1":[("are", "have"),("was", "have"), ("there", "these"), ("a", "the")],
-                "3":[("life", "is", "full", "of","crossroades", ",", "isn't", "it", "boy", "toy", "are", "fool", "you"),
-                     ("I", "have", "been", "in" ,"this", "queue", "for", "ages",",", "I", "am", "going" ,"to" ,"loose" ,"track" ,"of", "time", "mine", "of", "these","fude"),
-                     ("are", "you", "kidding", "me", "?", "You", "can", "not", "be", "only", "30", "years", "old","!", "20", "could", "pounding", "lonely", "solely", "were", "He")]}
+                "3":[("dive", "are", "fool", "you"),
+                     ("due", "of", "these","dude"),
+                     ("that", "could", "pounding", "deal","He")]}
 UPLOAD_FOLDER = 'audios'
 
 app = Flask(__name__)
@@ -67,6 +67,7 @@ def choose_and_translate(phrase_list,options_list, ex):
         right_option = phrase_list[ex][index][1]
         translation_phrase, translation_options= substitute_with_blank(translation_phrase, translation_options, right_option)
     if ex=="3":
+        translation_options.extend(translation_phrase.text.split())
         shuffle(translation_options)
         translation_phrase = translation_phrase.text
     return translation_phrase, translation_options
@@ -130,7 +131,6 @@ def textify_audio():
     options = text_of_speech.split()
     try:
         #check if word has been pronounced correctly
-        print(options)
         if is_sentence_correct(text_of_speech):
             response = jsonify(True)
             response.headers["Access-Control-Allow-Origin"] = "*"
