@@ -7,17 +7,20 @@
                     <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
                 </svg>
                 </button>
-                <img :src="src" alt="flag">
+                <img :src="src" class="flag"  alt="flag">
             </div>      
         </header>
         <div>
             <p>{{ $t("assignment.header_1_3") }}</p>
         </div>
         <!--When pressed first time starts recording, when pressed second time stops-->
-        <button class="buttonAudio" :disabled="disabledMic" @click="startListenAudio" :class="{'clickable': listening}">
+        <button class="buttonAudio" :disabled="disabledAudio" @click="startListenAudio" :class="{'clickable': speaking}">
             <img  class="audioImg"  
             :src="speaking ? imageSpeaking : imageNotSpeaking">
         </button>
+        <div class="inputText">
+            <p class="text">{{guessedPhrase}}</p>
+        </div>
         <div class="options">
             <div v-for="(name, index) in this.options">
                 <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index }"
@@ -43,8 +46,10 @@ export default {
             phrase: null,
             options: null,
             speaking: false,
-            imageNotSpeaking: '../../speaker/speaker.jpg',
-            imageSpeaking: '../../speaker/speaker-talking.jpg'
+            imageNotSpeaking: '../../speaker/speaker.png',
+            imageSpeaking: '../../speaker/speaker-talking.png',
+            disabledAudio: true,
+            guessedPhrase:""
         };
     },
 
@@ -71,6 +76,7 @@ export default {
             [key]: dict[key]
             });
         }, {});
+        this.disabledAudio=false;
         })
         .catch(error => {
           console.error(error);
@@ -79,6 +85,11 @@ export default {
 
         selectParagraph(index) {
         this.selectedParagraph = this.selectedParagraph === index ? null : index;
+        this.chooseOption(index);
+        },
+        chooseOption(word){
+            this.guessedPhrase+=this.options[word]+" ";
+            delete this.options[word];
         },
         goBack(){
         router.go(-1);
@@ -86,8 +97,15 @@ export default {
         startListenAudio(){
             this.recording = true;
             //Actually pornounce sentence
+            axios.get('http://127.0.0.1:5000/lev1/ex3/audio')
+            .then(response => {
+                console.log(response.data)
+            })
+            .catch(error => {
+                console.error(error);
+            });
+            }
         }
-    }
     };
 </script>
 
@@ -97,6 +115,7 @@ body{
 }
 
 .options{
+    
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -115,20 +134,51 @@ body{
     background: #C3E986;
     border-radius: 10px;
     border-color: transparent;
+    cursor: pointer;
+}
+
+.buttonConferma:disabled{
+    background-color: rgba(172, 160, 160, 0.806);
+    cursor: not-allowed;
+}
+
+.buttonAudio:disabled{
+    background-color: rgba(172, 160, 160, 0.806);
+    cursor: not-allowed;
+}
+.buttonAudio{
+    position:absolute;
+    width: 50%;
+    height: 15vh;
+    text-align: center;
+    left: 0; 
+    right: 0; 
+    margin-left: auto; 
+    margin-right: auto; 
+    background: #C3E986;
+    border-radius: 10px;
+    border-color: transparent;
+    cursor: pointer;
+}
+
+.audioImg{
+    width:50%;
 }
 
 .clickable-div {
-  width: fit-content;
   padding: 5px;
-  margin: 10px;
+  margin: 5px;
   border-radius: 10px;
   background-color: rgb(188, 224, 149);
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
+
 
 .clickable {
     background-color: rgb(110, 229, 110);
+    transform: scale(0.95);
+    transition: transform 0.5s ease;
 }
 
 
@@ -137,7 +187,7 @@ body{
     margin:0cap;
 }
 
-img{
+.flag{
     position:absolute;
     display: inline;
     width:10%;
@@ -145,4 +195,18 @@ img{
     margin-top: 1cap;
     margin-right: 1cap;
 }
+
+.inputText{
+    padding:20px;
+    margin-top:15vh;
+}
+
+.text{
+    width: 320px;
+    height: 130px;
+    background-color: white;
+    border-radius: 10px;
+    font-size: 20px;
+}
+
 </style>

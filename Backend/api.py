@@ -6,6 +6,7 @@ from flask_cors import CORS
 
 import speech_recognition as sr
 from googletrans import Translator
+import pyttsx3
 
 import random
 from random import shuffle
@@ -149,6 +150,16 @@ def get_phrase_ex3():
     response = jsonify(d)
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response
+
+@app.route("/lev1/ex3/audio", methods=["GET"])
+def prononuce_phrase():
+    #pronounce the sentence
+    engine = pyttsx3.init()
+    engine.setProperty('rate', 100)
+    engine.say(expected_sen)
+    engine.runAndWait()
+    return jsonify("success")
+
       
 if __name__ == '__main__':
     app.run()
