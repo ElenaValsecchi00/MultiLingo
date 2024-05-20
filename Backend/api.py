@@ -144,12 +144,20 @@ def textify_audio():
 @app.route("/lev1/ex3", methods=["GET"])
 def get_phrase_ex3():
     phrase,options = choose_and_translate(lev1_phrases,lev1_options,"3")
-    print(phrase, options)
     d = {str(i):opt for (i,opt) in zip(range(len(options)),options)}
     d['phrase']=phrase
     response = jsonify(d)
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response
+
+@app.route("/lev1/ex3/answer", methods=["POST"])
+def get_result():
+    submitted_phrase = request.get_json()['phrase']
+    if submitted_phrase.strip()==expected_sen:
+        return jsonify("Corretto")
+    else:
+        return jsonify("Sbagliato")
+
 
 @app.route("/lev1/ex3/audio", methods=["GET"])
 def prononuce_phrase():

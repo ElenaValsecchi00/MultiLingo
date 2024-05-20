@@ -29,7 +29,7 @@
             </p>
             </div>
         </div>
-        <button class="buttonConferma" @click="sendLanguage()">{{ $t("assignment.confirm") }}</button>
+        <button class="buttonConferma" @click="get_result">{{ $t("assignment.confirm") }}</button>
       
     </body>
 </template>
@@ -82,7 +82,16 @@ export default {
           console.error(error);
         });
         },
-
+        //Check if the guessed phrase is correct
+        get_result(){
+            axios.post('http://127.0.0.1:5000/lev1/ex3/answer', {phrase:this.guessedPhrase})
+            .then(response => {
+            console.log(response.data);
+            })
+            .catch(error => {
+            console.error(error);
+            });
+        },
         selectParagraph(index) {
         this.selectedParagraph = this.selectedParagraph === index ? null : index;
         this.chooseOption(index);
@@ -96,7 +105,7 @@ export default {
         },
         startListenAudio(){
             this.speaking = true;
-            //Actually pornounce sentence
+            //Actually pronounce sentence
             axios.get('http://127.0.0.1:5000/lev1/ex3/audio')
             .then(response => {
                 console.log(response.data)
