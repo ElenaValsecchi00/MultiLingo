@@ -99,6 +99,9 @@ export default {
             axios.post('http://127.0.0.1:5000/lev1/ex1/audio', {data: answer})
             .then(response => { 
                 console.log(response.data, answer)
+                if (response.data) {
+                    this.score += 0.5
+                }
                 this.stopRecordAudio()
             })
             .catch(error => {
@@ -112,8 +115,10 @@ export default {
                 console.log(response.data)
                 if(response.data){
                     console.log("tutto corretto")
-                    this.score += 1
+                    this.score += 0.5
+                    console.log(this.score)
                 }
+                
                 this.disabledConfirm = false
             })
             .catch(error => {
@@ -121,7 +126,7 @@ export default {
             });
         },
         goOn(){
-            router.push({name:"ex1/1", params: this.flag})
+            router.push({name:"ex2", params: this.flag})
         }
     }
     };

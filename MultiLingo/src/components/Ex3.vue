@@ -12,12 +12,12 @@
         </header>
         <div>
             <p>{{ $t("assignment.header_1_3") }}</p>
-        </div>
-        <!--When pressed first time starts recording, when pressed second time stops-->
-        <button class="buttonAudio" :disabled="disabledAudio" @click="startListenAudio" :class="{'clickable': speaking}">
+            <button class="buttonAudio" @click="startListenAudio()" :class="{'clickable': speaking}">
             <img  class="audioImg"  
             :src="speaking ? imageSpeaking : imageNotSpeaking">
-        </button>
+            </button>
+        </div>
+       
         <div class="inputText">
             <p class="text">{{guessedPhrase}}</p>
         </div>
@@ -46,9 +46,8 @@ export default {
             phrase: null,
             options: null,
             speaking: false,
-            imageNotSpeaking: '../../speaker/speaker.png',
-            imageSpeaking: '../../speaker/speaker-talking.png',
-            disabledAudio: true,
+            imageNotSpeaking: '../../audio/volumedown.png',
+            imageSpeaking: '../../audio/volumeup.png',
             guessedPhrase:""
         };
     },
@@ -76,7 +75,6 @@ export default {
             [key]: dict[key]
             });
         }, {});
-        this.disabledAudio=false;
         })
         .catch(error => {
           console.error(error);
@@ -152,14 +150,10 @@ body{
     cursor: not-allowed;
 }
 
-.buttonAudio:disabled{
-    background-color: rgba(172, 160, 160, 0.806);
-    cursor: not-allowed;
-}
 .buttonAudio{
     position:absolute;
     width: 50%;
-    height: 15vh;
+    height: auto;
     text-align: center;
     left: 0; 
     right: 0; 
@@ -170,7 +164,6 @@ body{
     border-color: transparent;
     cursor: pointer;
 }
-
 .audioImg{
     width:50%;
 }
@@ -186,11 +179,10 @@ body{
 
 
 .clickable {
-    background-color: rgb(110, 229, 110);
+    background-color: rgb(6, 148, 6);
     transform: scale(0.95);
     transition: transform 0.5s ease;
 }
-
 
 .container{
     position:relative;
@@ -208,15 +200,17 @@ body{
 
 .inputText{
     padding:20px;
-    margin-top:15vh;
+    margin-top:25vh;
+
 }
 
 .text{
-    width: 320px;
-    height: 130px;
+    width: auto;
+    height: 100px;
     background-color: white;
     border-radius: 10px;
     font-size: 20px;
+    
 }
 
 </style>
