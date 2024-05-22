@@ -7,12 +7,12 @@
                     <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
                 </svg>
                 </button>
-                <img :src="src" class="flag" alt="flag">
+                <img :src='src' class="flag" alt="flag">
             </div>
             
         </header>
         <div>
-            <p>{{ $t("assignment.header") }}</p>
+            <p>{{ $t("assignment.header_1_1") }}</p>
             <p>{{ this.phrase }}</p>
         </div>
         <div class="options">
@@ -23,13 +23,13 @@
             </p>
             </div>
         </div>
-        <button class="buttonAudio" @click="recordAudio()" :class="{'clickable': recording}">
+        <!--When pressed first time starts recording, when pressed second time stops-->
+        <button class="buttonAudio" :disabled="disabledMic" @click="startRecordAudio" :class="{'clickable': recording}">
             <img  class="audioImg"  
-            :src="imageUrl">
+            :src="recording ? imageRecording : imageNotRecording">
         </button>
-
-
-        <button class="buttonConferma" @click="sendLanguage()">{{ $t("assignment.confirm") }}</button>
+        
+        <button class="buttonConferma" :disabled="disabledConfirm" @click="goOn()">{{ $t("assignment.confirm") }}</button>
     
         
     </body>
@@ -38,6 +38,7 @@
 <script>
 import router from '@/router';
 import axios from "axios"
+
 export default {
     data() {
         return {
@@ -46,7 +47,12 @@ export default {
             phrase: null,
             options: null,
             recording: false,
-            imageUrl: '../../micro/microphone.png'
+            imageNotRecording: '../../micro/microphone.png',
+            imageRecording: '../../micro/listening.png',
+            recorder:null,
+            disabledMic: true,
+            disabledConfirm: true,
+            score: 0
         };
     },
 
@@ -60,11 +66,10 @@ export default {
     },
     methods: {  
         fetchPhrase(){
-        axios.get('http://127.0.0.1:5000/ex1')
+        axios.get('http://127.0.0.1:5000/lev1/phrases', {params:{ex:"1"}})
         .then(response => {
         // do something with response.data
          let dict = response.data;
-         console.log(dict)
          this.phrase = dict['phrase']
          this.options = Object.keys(dict)
         .filter((key) => key!=='phrase')
@@ -81,16 +86,47 @@ export default {
 
         selectParagraph(index) {
         this.selectedParagraph = this.selectedParagraph === index ? null : index;
+        this.disabledMic = this.selectedParagraph === null? true : false;
         },
 
         goBack(){
         router.go(-1);
         },
-        
-        recordAudio(){
+        //function that prompts backend to record and gets the speech to text
+        startRecordAudio(){
             this.recording = true;
-            this.imageUrl= "../../micro/listening.png"
-            //add recording 
+            const answer = this.options[this.selectedParagraph]
+            axios.post('http://127.0.0.1:5000/lev1/ex1/audio', {data: answer})
+            .then(response => { 
+                console.log(response.data, answer)
+                if (response.data) {
+                    this.score += 0.5
+                }
+                this.stopRecordAudio()
+            })
+            .catch(error => {
+                console.log(error)
+            });
+        }, 
+        stopRecordAudio(){
+            this.recording = false;
+            axios.get('http://127.0.0.1:5000/lev1/ex1/audio')
+            .then(response => { 
+                console.log(response.data)
+                if(response.data){
+                    console.log("tutto corretto")
+                    this.score += 0.5
+                    console.log(this.score)
+                }
+                
+                this.disabledConfirm = false
+            })
+            .catch(error => {
+                console.log(error)
+            });
+        },
+        goOn(){
+            router.push({name:"ex2", params: this.flag})
         }
     }
     };
@@ -118,6 +154,16 @@ body{
     background: #C3E986;
     border-radius: 10px;
     border-color: transparent;
+    cursor: pointer;
+}
+
+.buttonConferma:disabled{
+    background-color: rgba(172, 160, 160, 0.806);
+    cursor: not-allowed;
+}
+.buttonAudio:disabled{
+    background-color: rgba(172, 160, 160, 0.806);
+    cursor: not-allowed;
 }
 .buttonAudio{
     position:absolute;
@@ -132,7 +178,7 @@ body{
     background: #C3E986;
     border-radius: 10px;
     border-color: transparent;
-
+    cursor: pointer;
 }
 .audioImg{
     width:50%;
