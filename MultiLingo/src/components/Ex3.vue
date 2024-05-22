@@ -62,7 +62,7 @@ export default {
     },
     methods: {  
         fetchPhrase(){
-        axios.get('http://127.0.0.1:5000/lev1/ex3')
+        axios.get('http://127.0.0.1:5000/lev1/phrases',{params:{ex:"3"}})
         .then(response => {
           console.log(response.data);
           // do something with response.data
@@ -104,7 +104,7 @@ export default {
         startListenAudio(){
             this.speaking = true;
             //Actually pronounce sentence
-            axios.get('http://127.0.0.1:5000/lev1/ex3/audio')
+            axios.get('http://127.0.0.1:5000/lev1/pronounce')
             .then(response => {
                 console.log(response.data)
                 this.speaking= false;
@@ -200,7 +200,7 @@ body{
 
 .inputText{
     padding:20px;
-    margin-top:25vh;
+    margin-top:15vh;
 
 }
 

@@ -64,7 +64,7 @@ export default {
     },
     methods: {  
         fetchPhrase(){
-        axios.get('http://127.0.0.1:5000/lev1/ex1')
+        axios.get('http://127.0.0.1:5000/lev1/phrases',{params:{ex:"2"}})
         .then(response => {
         // do something with response.data
          let dict = response.data;
@@ -87,7 +87,7 @@ export default {
         },
         startListening(){
             this.listening = this.listening === false? true : false;
-            axios.get('http://127.0.0.1:5000/lev1/ex3/audio')
+            axios.get('http://127.0.0.1:5000/lev1/pronounce')
             .then(response => {
                 console.log(response.data)
                 this.listening = false;

@@ -24,11 +24,13 @@ expected_sen = ""
 lev1_phrases = {"1": [("My mother is a good hiker", 2),("Elena had chicken pox when she was six",1), ("See this cat, it is striped",1),
                        ("My mother is one amongst the english teachers of the school",3)],
                 "3":[("life is full of crossroades",None),("I have been in this queue for ages",None),
-                     ("are you joking? This can not be real!",None)]}
+                     ("are you joking? This can not be real!",None)],
+                "2":[("My favourite color is green",4), ("I really like working out",2),("I just adopted a dog",4)]}
 lev1_options = {"1":[("are", "have"),("was", "have"), ("there", "these"), ("a", "the")],
                 "3":[("dive", "are", "fool", "you"),
                      ("due", "of", "these","dude"),
-                     ("that", "could", "pounding", "deal","He")]}
+                     ("that", "could", "pounding", "deal","He")],
+                "2":[("yellow", "red"),("enjoy","don't like"), ("child","cat")]}
 UPLOAD_FOLDER = 'audios'
 
 app = Flask(__name__)
@@ -71,6 +73,10 @@ def choose_and_translate(phrase_list,options_list, ex):
         translation_options.extend(translation_phrase.text.split())
         shuffle(translation_options)
         translation_phrase = translation_phrase.text
+    if ex=="2":
+        right_option = phrase_list[ex][index][1]
+        translation_phrase, translation_options= substitute_with_blank(translation_phrase, translation_options, right_option)
+
     return translation_phrase, translation_options
 
 #function that records an audio file 
@@ -104,17 +110,17 @@ def postLanguage():
     language = context["language"]
     return language
 
-@app.route("/lev1/ex1", methods=["GET"])
+@app.route("/lev1/phrases", methods=["GET"])
 #get the text of exercise
 def get_phrase_ex1():
-    phrase,options = choose_and_translate(lev1_phrases,lev1_options,"1")
+    phrase,options = choose_and_translate(lev1_phrases,lev1_options,request.args.get('ex',''))
     #dict key:number of option, value:parola
     d = {str(i):opt for (i,opt) in zip(range(len(options)),options)}
     d['phrase']=phrase
     response = jsonify(d)
     response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
-
+    return response 
+    
 @app.route("/lev1/ex1/audio", methods=["POST"])
 #record audio
 def record_audio():
@@ -159,7 +165,7 @@ def get_result():
         return jsonify("Sbagliato")
 
 
-@app.route("/lev1/ex3/audio", methods=["GET"])
+@app.route("/lev1/pronounce", methods=["GET"])
 def prononuce_phrase():
     #pronounce the sentence
     engine = pyttsx3.init()
