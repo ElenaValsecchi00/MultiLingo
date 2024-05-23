@@ -112,7 +112,7 @@ def postLanguage():
 
 @app.route("/lev1/phrases", methods=["GET"])
 #get the text of exercise
-def get_phrase_ex1():
+def get_phrase():
     phrase,options = choose_and_translate(lev1_phrases,lev1_options,request.args.get('ex',''))
     #dict key:number of option, value:parola
     d = {str(i):opt for (i,opt) in zip(range(len(options)),options)}
@@ -146,17 +146,9 @@ def textify_audio():
     except sr.UnknownValueError:
         print("Oops! Didn't catch that")
         return jsonify("Oops! Didn't catch that")
-    
-@app.route("/lev1/ex3", methods=["GET"])
-def get_phrase_ex3():
-    phrase,options = choose_and_translate(lev1_phrases,lev1_options,"3")
-    d = {str(i):opt for (i,opt) in zip(range(len(options)),options)}
-    d['phrase']=phrase
-    response = jsonify(d)
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
 
 @app.route("/lev1/ex3/answer", methods=["POST"])
+#see if expected stentence is matched
 def get_result():
     submitted_phrase = request.get_json()['phrase']
     if submitted_phrase.strip()==expected_sen:
