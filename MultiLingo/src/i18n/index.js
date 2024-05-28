@@ -18,7 +18,7 @@ export default createI18n({
         header_1_1: "Complete the sentence",
         header_1_2: "Listen and complete the sentence",
         header_1_3: "Answer the questions",
-        header_3: "Welcome to Megastore! Are you looking for food, tools or clothes?",
+        header_3: "Welcome to Megastore! Are you looking for fruit, tools or clothes?",
         confirm: "Confirm"
       }
     },
@@ -52,7 +52,7 @@ export default createI18n({
           header_1_1: "Completa la frase",
           header_1_2: "Escucha y completa la frase",
           header_1_3: "Responde a las preguntas",
-          header_3: "Benvenuto in Megastore! Stai cercando frutta, attrezzi o vestiti?",
+          header_3: "¡Bienvenidos a Megatienda! ¿Buscas fruta, herramientas o ropa?",
           confirm: "Confirma"
         }
     },
@@ -69,7 +69,7 @@ export default createI18n({
           header_1_1: "Complétez cette phrase",
           header_1_2: "Écoutez et complétez la phrase",
           header_1_3: "Répondez aux questions",
-          header_3: "Benvenuto in Megastore! Stai cercando frutta, attrezzi o vestiti?",
+          header_3: "Bienvenue sur Mégastore! Vous cherchez des fruits, des outils ou des vêtements?",
           confirm: "Confirme"
         }
       }
