@@ -9,6 +9,7 @@ answers = {
     "fruit": ["apple", "banana", "passion fruit"]
 }
 
+#logic of the conversation
 def handle_input(user_input):
     doc = nlp(user_input.lower())
     #for token in doc: print(token.lemma_)
@@ -27,7 +28,8 @@ def handle_input(user_input):
         return "Ok, thanks for the purchase. Have a nice day!"
     else: 
         return "I didn't understand. Can you repeat?"
-    
+
+#gets the list corresponding to the purchase category
 def reveal_list(doc):
     for token in doc:
         if token.lemma_ in answers:
@@ -37,7 +39,7 @@ def reveal_list(doc):
     return "I couldn't understand. Can you repeat?"
 
 #########
-print("Welcome to Megastore! Are you looking for food, tools or clothes?")
+print("Welcome to Megastore! Are you looking for fruit, tools or clothes?")
 
 while True:
     user_input = input("You: ")
