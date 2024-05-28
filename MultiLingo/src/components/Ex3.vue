@@ -13,15 +13,14 @@
         
         <p>{{ $t("assignment.header_1_3") }}</p>
         
+        <h3 class="text">{{ $t("assignment.header_3") }}</h3>
         
-       
-        <div class="text">
-            <button class="buttonAudio" @click="startListenAudio()" :class="{'clickable': speaking}">
-            <img  class="audioImg"  
-                :src="speaking ? imageSpeaking : imageNotSpeaking">
-            </button>
+        <form>
+        <div class="text answer">
+            <input class="inputxt" v-model="message"></input><a href="#" v-on:click="getNextQuestion()">SUBMIT</a>
         </div>
-        
+        </form>
+        <h3 class="text" :class="{ 'hide': !seen }">{{ question }}</h3>
         <button class="buttonConferma" @click="get_result">{{ $t("assignment.confirm") }}</button>
       
     </body>
@@ -35,77 +34,35 @@ export default {
     data() {
         return {
             flag: null,
-            selectedParagraph: null,
-            phrase: null,
-            options: null,
-            speaking: false,
-            imageNotSpeaking: '../../audio/volumedown.png',
-            imageSpeaking: '../../audio/volumeup.png',
-            guessedPhrase:""
+            message: null,
+            question: null,
+            seen: false,
+            
         };
     },
-
     created(){
         this.flag = this.$route.params.language;
         this.src = '../../flags/' + this.flag + ".png";
-        this.fetchPhrase();
     },
     mounted() {
         
     },
     methods: {  
-        fetchPhrase(){
-        axios.get('http://127.0.0.1:5000/lev1/phrases',{params:{ex:"3"}})
-        .then(response => {
-          console.log(response.data);
-          // do something with response.data
-         let dict = response.data;
-         this.phrase = dict['phrase']
-         this.options = Object.keys(dict)
-        .filter((key) => key!=='phrase')
-        .reduce((obj, key) => {
-            return Object.assign(obj, {
-            [key]: dict[key]
-            });
-        }, {});
-        })
-        .catch(error => {
-          console.error(error);
-        });
-        },
-        //Check if the guessed phrase is correct
-        get_result(){
-            axios.post('http://127.0.0.1:5000/lev1/ex3/answer', {phrase:this.guessedPhrase})
-            .then(response => {
-            console.log(response.data);
-            })
-            .catch(error => {
-            console.error(error);
-            });
-        },
-        selectParagraph(index) {
-        this.selectedParagraph = this.selectedParagraph === index ? null : index;
-        this.chooseOption(index);
-        },
-        chooseOption(word){
-            this.guessedPhrase+=this.options[word]+" ";
-            delete this.options[word];
-        },
         goBack(){
-        router.go(-1);
+            router.go(-1);
         },
-        startListenAudio(){
-            this.speaking = true;
-            //Actually pronounce sentence
-            axios.get('http://127.0.0.1:5000/lev1/pronounce')
-            .then(response => {
+        getNextQuestion(){
+            console.log(this.message)
+            axios.post('http://127.0.0.1:5000/lev3/conversation', {data: this.message})
+            .then(response => { 
                 console.log(response.data)
-                this.speaking= false;
+                this.question = response.data
+                this.seen = true
             })
             .catch(error => {
-                console.error(error);
+                console.log(error)
             });
-            }
+        }
         }
     };
 </script>
@@ -116,7 +73,6 @@ body{
 }
 
 .options{
-    
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -191,19 +147,32 @@ body{
     margin-right: 1cap;
 }
 
-.inputText{
-    padding:20px;
-    margin-top:15vh;
-
-}
 
 .text{
     width: auto;
-    height: 35vh;
-    background-color: white;
+    height: auto;
+    background-color: #C3E986;
     border-radius: 10px;
     font-size: 20px;
-    
+    margin: 20px;
+    padding: 10px;
+}
+
+.answer{
+    background-color: rgba(255, 255, 255, 0);
+    text-align:center;
+}
+
+.inputxt{
+    border-color: white;
+    border-radius: 10px;
+    margin: 20px;
+    padding: 10px;
+    font-size: 20px;
+}
+
+.hide{
+    visibility: hidden !important;
 }
 
 </style>
