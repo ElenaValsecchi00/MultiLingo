@@ -10,25 +10,18 @@
                 <img :src="src" class="flag"  alt="flag">
             </div>      
         </header>
-        <div>
-            <p>{{ $t("assignment.header_1_3") }}</p>
+        
+        <p>{{ $t("assignment.header_1_3") }}</p>
+        
+        
+       
+        <div class="text">
             <button class="buttonAudio" @click="startListenAudio()" :class="{'clickable': speaking}">
             <img  class="audioImg"  
-            :src="speaking ? imageSpeaking : imageNotSpeaking">
+                :src="speaking ? imageSpeaking : imageNotSpeaking">
             </button>
         </div>
-       
-        <div class="inputText">
-            <p class="text">{{guessedPhrase}}</p>
-        </div>
-        <div class="options">
-            <div v-for="(name, index) in this.options">
-                <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index }"
-                 @click="selectParagraph(index)">
-                {{ name }}
-            </p>
-            </div>
-        </div>
+        
         <button class="buttonConferma" @click="get_result">{{ $t("assignment.confirm") }}</button>
       
     </body>
@@ -151,8 +144,8 @@ body{
 }
 
 .buttonAudio{
-    position:absolute;
-    width: 50%;
+    position:relative;
+    width: 10%;
     height: auto;
     text-align: center;
     left: 0; 
@@ -206,7 +199,7 @@ body{
 
 .text{
     width: auto;
-    height: 100px;
+    height: 35vh;
     background-color: white;
     border-radius: 10px;
     font-size: 20px;

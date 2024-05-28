@@ -17,7 +17,7 @@ export default createI18n({
       assignment:{
         header_1_1: "Complete the sentence",
         header_1_2: "Listen and complete the sentence",
-        header_1_3: "Listen and recreate the sentence",
+        header_1_3: "Answer the questions",
         confirm: "Confirm"
       }
     },
@@ -33,7 +33,7 @@ export default createI18n({
         assignment:{
           header_1_1: "Completa la frase",
           header_1_2: "Ascolta e completa la frase",
-          header_1_3: "Ascolta e ricrea la frase",
+          header_1_3: "Rispondi alle domande",
           confirm: "Conferma"
         }
       },
@@ -49,7 +49,7 @@ export default createI18n({
         assignment:{
           header_1_1: "Completa la frase",
           header_1_2: "Escucha y completa la frase",
-          header_1_3: "Escucha y recrea la frase",
+          header_1_3: "Responde a las preguntas",
           confirm: "Confirma"
         }
     },
@@ -65,7 +65,7 @@ export default createI18n({
         assignment:{
           header_1_1: "Complétez cette phrase",
           header_1_2: "Écoutez et complétez la phrase",
-          header_1_3: "Écoutez et recréez la phrase",
+          header_1_3: "Répondez aux questions",
           confirm: "Confirme"
         }
       }
