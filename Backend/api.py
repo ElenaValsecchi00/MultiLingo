@@ -185,27 +185,27 @@ def reveal_list(doc):
 def handle_input():
     phrase = request.get_json()
     phrase = phrase["data"]
-    print(phrase)
     if phrase.lower() in ["quit", "bye", "end"]:
         return jsonify("Goodbye!")
     else:
-        doc = nlp(phrase.lower())
+        doc = nlp(translator.translate(phrase.lower(),src=language, dest="en").text)
         #for token in doc: print(token.lemma_)
-        
+        answer = ""
         if any(token.lemma_ in ["tool", "clothe", "fruit"] for token in doc):
-            return reveal_list(doc)
+            answer = reveal_list(doc)
         elif any(token.lemma_ in answers["tool"] or token.lemma_ in answers["clothe"] for token in doc):
-            return "Would you like to have it now or delivered?"
+            answer = "Would you like to have it now or delivered?"
         elif any(token.lemma_ in ["here", "now"] or token.lemma_ in answers["fruit"] for token in doc):
-            return "Would you like to pay cash or by card?" 
+            answer = "Would you like to pay cash or by card?" 
         elif any(token.lemma_ in ["deliver", "home"] for token in doc):
-            return "Can I get your address?" 
+            answer = "Can I get your address?" 
         elif any(token.lemma_ in ["address", "street", "avenue", "live"]  for token in doc):
-            return "Ok, you can pay once delivered. Thanks for the purchase. Have a nice day!"
+            answer = "Ok, you can pay once delivered. Thanks for the purchase. Have a nice day!"
         elif any(token.lemma_ in ["cash", "card"] for token in doc):
-            return "Ok, thanks for the purchase. Have a nice day!"
+            answer = "Ok, thanks for the purchase. Have a nice day!"
         else: 
-            return "I didn't understand. Can you repeat?"   
+            answer = "I didn't understand. Can you repeat?"   
+        return translator.translate(answer,src="en", dest=language).text
 
 
 if __name__ == '__main__':

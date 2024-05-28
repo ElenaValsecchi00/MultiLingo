@@ -30,6 +30,7 @@
 <script>
 import router from '@/router';
 import axios from "axios"
+import i18n from '@/i18n';
 export default {
     data() {
         return {
@@ -37,19 +38,21 @@ export default {
             message: null,
             question: null,
             seen: false,
-            
+            language:null
         };
     },
     created(){
         this.flag = this.$route.params.language;
         this.src = '../../flags/' + this.flag + ".png";
+        this.language = i18n.global.locale.value;
     },
     mounted() {
         
     },
     methods: {  
         goBack(){
-            router.go(-1);
+            console.log(router.getRoutes())
+            router.go(-2);//sistemare
         },
         getNextQuestion(){
             console.log(this.message)
