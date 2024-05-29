@@ -7,13 +7,19 @@
                     <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
                 </svg>
                 </button>
-                <img :src='src' class="flag" alt="flag">
-            </div>
-            
+                <img :src="src" class="flag"  alt="flag">
+            </div>      
         </header>
         <div>
-            <p>{{ $t("assignment.header_1_1") }}</p>
-            <p>{{ this.phrase }}</p>
+            <p>{{ $t("assignment.header_1_3") }}</p>
+            <button class="buttonAudio" @click="startListenAudio()" :class="{'clickable': speaking}">
+            <img  class="audioImg"  
+            :src="speaking ? imageSpeaking : imageNotSpeaking">
+            </button>
+        </div>
+       
+        <div class="inputText">
+            <p class="text">{{guessedPhrase}}</p>
         </div>
         <div class="options">
             <div v-for="(name, index) in this.options">
@@ -23,22 +29,15 @@
             </p>
             </div>
         </div>
-        <!--When pressed first time starts recording, when pressed second time stops-->
-        <button class="buttonAudio" :disabled="disabledMic" @click="startRecordAudio" :class="{'clickable': recording}">
-            <img  class="audioImg"  
-            :src="recording ? imageRecording : imageNotRecording">
-        </button>
-        
-        <button class="buttonConferma" :disabled="disabledConfirm" @click="goOn()">{{ $t("assignment.confirm") }}</button>
-    
-        
+        <button class="buttonConferma" @click="get_result">{{ $t("assignment.confirm") }}</button>
+      
     </body>
 </template>
-  
+
+
 <script>
 import router from '@/router';
 import axios from "axios"
-
 export default {
     data() {
         return {
@@ -46,13 +45,10 @@ export default {
             selectedParagraph: null,
             phrase: null,
             options: null,
-            recording: false,
-            imageNotRecording: '../../micro/microphone.png',
-            imageRecording: '../../micro/listening.png',
-            recorder:null,
-            disabledMic: true,
-            disabledConfirm: true,
-            score: 0
+            speaking: false,
+            imageNotSpeaking: '../../audio/volumedown.png',
+            imageSpeaking: '../../audio/volumeup.png',
+            guessedPhrase:""
         };
     },
 
@@ -66,9 +62,10 @@ export default {
     },
     methods: {  
         fetchPhrase(){
-        axios.get('http://127.0.0.1:5000/lev1/phrases', {params:{ex:"1"}})
+        axios.get('http://127.0.0.1:/lev1/phrases',{params:{ex:"3"}})
         .then(response => {
-        // do something with response.data
+          console.log(response.data);
+          // do something with response.data
          let dict = response.data;
          this.phrase = dict['phrase']
          this.options = Object.keys(dict)
@@ -83,52 +80,40 @@ export default {
           console.error(error);
         });
         },
-
+        //Check if the guessed phrase is correct
+        get_result(){
+            axios.post('http://127.0.0.1:5000/lev1/ex3/answer', {phrase:this.guessedPhrase})
+            .then(response => {
+            console.log(response.data);
+            })
+            .catch(error => {
+            console.error(error);
+            });
+        },
         selectParagraph(index) {
         this.selectedParagraph = this.selectedParagraph === index ? null : index;
-        this.disabledMic = this.selectedParagraph === null? true : false;
+        this.chooseOption(index);
         },
-
+        chooseOption(word){
+            this.guessedPhrase+=this.options[word]+" ";
+            delete this.options[word];
+        },
         goBack(){
         router.go(-1);
         },
-        //function that prompts backend to record and gets the speech to text
-        startRecordAudio(){
-            this.recording = true;
-            const answer = this.options[this.selectedParagraph]
-            axios.post('http://127.0.0.1:5000/lev1/ex1/audio', {data: answer})
-            .then(response => { 
-                console.log(response.data, answer)
-                if (response.data) {
-                    this.score += 0.5
-                }
-                this.stopRecordAudio()
-            })
-            .catch(error => {
-                console.log(error)
-            });
-        }, 
-        stopRecordAudio(){
-            this.recording = false;
-            axios.get('http://127.0.0.1:5000/lev1/ex1/audio')
-            .then(response => { 
+        startListenAudio(){
+            this.speaking = true;
+            //Actually pronounce sentence
+            axios.get('http://127.0.0.1:5000/lev1/pronounce')
+            .then(response => {
                 console.log(response.data)
-                if(response.data){
-                    console.log("tutto corretto")
-                    this.score += 0.5
-                    console.log(this.score)
-                }
-                
-                this.disabledConfirm = false
+                this.speaking= false;
             })
             .catch(error => {
-                console.log(error)
+                console.error(error);
             });
-        },
-        goOn(){
-            router.push({name:"ex2", params: this.flag})
+            }
         }
-    }
     };
 </script>
 
@@ -138,7 +123,10 @@ body{
 }
 
 .options{
-    overflow: scroll;
+    
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .buttonConferma {
@@ -161,10 +149,7 @@ body{
     background-color: rgba(172, 160, 160, 0.806);
     cursor: not-allowed;
 }
-.buttonAudio:disabled{
-    background-color: rgba(172, 160, 160, 0.806);
-    cursor: not-allowed;
-}
+
 .buttonAudio{
     position:absolute;
     width: 50%;
@@ -172,7 +157,6 @@ body{
     text-align: center;
     left: 0; 
     right: 0; 
-    bottom:100px;
     margin-left: auto; 
     margin-right: auto; 
     background: #C3E986;
@@ -183,14 +167,16 @@ body{
 .audioImg{
     width:50%;
 }
+
 .clickable-div {
   padding: 5px;
-  margin: 10px;
+  margin: 5px;
   border-radius: 10px;
   background-color: rgb(188, 224, 149);
   cursor: pointer;
   transition: all 0.3s ease;
 }
+
 
 .clickable {
     background-color: rgb(6, 148, 6);
@@ -211,5 +197,20 @@ body{
     margin-top: 1cap;
     margin-right: 1cap;
 }
-</style>
 
+.inputText{
+    padding:20px;
+    margin-top:15vh;
+
+}
+
+.text{
+    width: auto;
+    height: 100px;
+    background-color: white;
+    border-radius: 10px;
+    font-size: 20px;
+    
+}
+
+</style>

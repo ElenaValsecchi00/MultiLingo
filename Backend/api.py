@@ -19,6 +19,7 @@ rec = sr.Recognizer()
 language = ""
 audio = None
 expected_sen = ""
+right_answer = ""
 
 #key:ex, value = list of tuples (phrase, word position of guessed word) for ex 1, for ex 3 (phrase,None)
 lev1_phrases = {"1": [("My mother is a good hiker", 2),("Elena had chicken pox when she was six",1), ("See this cat, it is striped",1),
@@ -82,7 +83,6 @@ def choose_and_translate(phrase_list,options_list, ex):
 #function that records an audio file 
 def record():
     mic = sr.Microphone()
-    
     with mic as source:
         rec.adjust_for_ambient_noise(source)
         global audio
@@ -121,11 +121,10 @@ def get_phrase():
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response 
     
-@app.route("/lev1/ex1/audio", methods=["POST"])
+@app.route("/lev1/ex1/record", methods=["POST"])
 #record audio
 def record_audio():
     global audio
-    global score
     data = request.get_json()
     audio = record()
     return jsonify(True) if(data["data"] == right_answer) else jsonify(False)
@@ -206,6 +205,19 @@ def handle_input():
         else: 
             answer = "I didn't understand. Can you repeat?"   
         return translator.translate(answer,src="en", dest=language).text
+
+@app.route("/lev3/conversation", methods=["GET"])
+#get the tedxt of the message in level 3
+def get_pronounced_phrase():
+    text_of_speech = speech_to_text(audio)
+    return jsonify(text_of_speech)
+
+@app.route("/lev3/record", methods=["POST"])
+#record the message in level 3
+def record_lev3():
+    global audio
+    audio = record()
+    return jsonify("Registrato")
 
 
 if __name__ == '__main__':

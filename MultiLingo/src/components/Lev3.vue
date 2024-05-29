@@ -16,10 +16,17 @@
         <h3 class="text">{{ $t("assignment.header_3") }}</h3>
         
         <form>
-        <div class="text answer">
-            <input class="inputxt" v-model="message"></input><a href="#" v-on:click="getNextQuestion()">SUBMIT</a>
+
+        <div >
+            <p class="textanswer">{{this.message}}</p>
         </div>
+        <a href="#" v-on:click="getNextQuestion()" id="submit">SUBMIT</a>
         </form>
+         <!--When pressed first time starts recording, when pressed second time stops-->
+         <button class="buttonAudio" :disabled="disabledMic" @click="startRecordAudio" :class="{'clickable': recording}">
+            <img  class="audioImg"  
+            :src="recording ? imageRecording : imageNotRecording">
+        </button>
         <h3 class="text" :class="{ 'hide': !seen }">{{ question }}</h3>
         <button class="buttonConferma" @click="get_result">{{ $t("assignment.confirm") }}</button>
       
@@ -38,7 +45,12 @@ export default {
             message: null,
             question: null,
             seen: false,
-            language:null
+            language:null,
+            recording: false,
+            imageNotRecording: '../../micro/microphone.png',
+            imageRecording: '../../micro/listening.png',
+            recorder:null,
+            disabledMic: false,
         };
     },
     created(){
@@ -51,16 +63,37 @@ export default {
     },
     methods: {  
         goBack(){
-            console.log(router.getRoutes())
-            router.go(-2);//sistemare
+            router.go(-1);
         },
         getNextQuestion(){
-            console.log(this.message)
             axios.post('http://127.0.0.1:5000/lev3/conversation', {data: this.message})
             .then(response => { 
                 console.log(response.data)
                 this.question = response.data
                 this.seen = true
+            })
+            .catch(error => {
+                console.log(error)
+            });
+        },
+        //function that prompts backend to record and gets the speech to text
+        startRecordAudio(){
+        this.recording = true;
+        axios.post('http://127.0.0.1:5000/lev3/record')
+        .then(response => { 
+            this.stopRecordAudio()
+        })
+        .catch(error => {
+            console.log(error)
+        });
+        },  
+        stopRecordAudio(){
+            this.recording = false;
+            axios.get('http://127.0.0.1:5000/lev3/conversation')
+            .then(response => { 
+                console.log(response.data)
+                this.message = response.data
+                this.disabledConfirm = false
             })
             .catch(error => {
                 console.log(error)
@@ -95,6 +128,11 @@ body{
     border-radius: 10px;
     border-color: transparent;
     cursor: pointer;
+}
+
+#submit{
+    text-align: center;
+    padding:150px;
 }
 
 .buttonConferma:disabled{
@@ -161,17 +199,40 @@ body{
     padding: 10px;
 }
 
-.answer{
-    background-color: rgba(255, 255, 255, 0);
-    text-align:center;
-}
-
-.inputxt{
-    border-color: white;
+.textanswer{
+    width: auto;
+    height: 7vh;
+    background-color: white;
+    font-size: smaller;
+    text-align: center;
     border-radius: 10px;
+    font-size: 20px;
     margin: 20px;
     padding: 10px;
-    font-size: 20px;
+}
+
+
+.buttonAudio:disabled{
+    background-color: rgba(172, 160, 160, 0.806);
+    cursor: not-allowed;
+}
+.buttonAudio{
+    position:absolute;
+    width: 50%;
+    height: auto;
+    text-align: center;
+    left: 0; 
+    right: 0; 
+    bottom:100px;
+    margin-left: auto; 
+    margin-right: auto; 
+    background: #C3E986;
+    border-radius: 10px;
+    border-color: transparent;
+    cursor: pointer;
+}
+.audioImg{
+    width:50%;
 }
 
 .hide{
