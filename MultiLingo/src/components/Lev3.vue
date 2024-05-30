@@ -16,8 +16,7 @@
             <h3 class="text">{{ $t("assignment.header_3") }}</h3>
             <div v-for="(name, index) in this.conversation">
                 <h3 class="text" :class="{ 'answer': index % 2 == 0}">{{ name }}</h3> 
-        </div>
-             
+            </div>
         </div>
         
         <div class="message">
