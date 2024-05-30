@@ -51,7 +51,7 @@ export default{
         router.go(-1);
     },
     goEx(i){
-        router.push({name:"ex" + i, params: this.flag});
+        router.push({name:"lev" + i, params: this.flag});
     }
 }
 };

@@ -96,7 +96,7 @@ export default {
         startRecordAudio(){
             this.recording = true;
             const answer = this.options[this.selectedParagraph]
-            axios.post('http://127.0.0.1:5000/lev1/ex1/audio', {data: answer})
+            axios.post('http://127.0.0.1:5000/lev1/ex1/record', {data: answer})
             .then(response => { 
                 console.log(response.data, answer)
                 if (response.data) {
@@ -126,7 +126,7 @@ export default {
             });
         },
         goOn(){
-            router.push({name:"ex2", params: this.flag})
+            router.push({name:"lev1_2", params: this.flag})
         }
     }
     };

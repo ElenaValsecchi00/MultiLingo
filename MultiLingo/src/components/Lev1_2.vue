@@ -100,7 +100,7 @@ export default {
         router.go(-1);
         },
         goOn(){
-            router.push({name:"ex3", params: this.flag})
+            router.push({name:"lev1_3", params: this.flag})
         }
     }
     };

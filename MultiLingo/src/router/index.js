@@ -1,9 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingPage from '../components/LandingPage.vue'
 import ChooseLevelPage from '../components/ChooseLevel.vue'
-import Ex1Page from '../components/Ex1.vue'
-import Ex2Page from '../components/Ex2.vue'
-import Ex3Page from '../components/Ex3.vue'
+import Lev1Page from '../components/Lev1.vue'
+import Lev1_2Page from '../components/Lev1_2.vue'
+import Lev1_3Page from '../components/Lev1_3.vue'
+import Lev3Page from '../components/Lev3.vue'
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -18,19 +21,24 @@ const router = createRouter({
       component: ChooseLevelPage
     },
     {
-      path: '/:language/ex1',
-      name: 'ex1',
-      component: Ex1Page
+      path: '/:language/lev1',
+      name: 'lev1',
+      component: Lev1Page
     },
     {
-      path: '/:language/ex2',
-      name: 'ex2',
-      component: Ex2Page
+      path: '/:language/lev3',
+      name: 'lev3',
+      component: Lev3Page
     },
     {
-      path: '/:language/ex3',
-      name: 'ex3',
-      component: Ex3Page
+      path: '/:language/lev1_2',
+      name: 'lev1_2',
+      component: Lev1_2Page
+    },
+    {
+      path: '/:language/lev1_3',
+      name: 'lev1_3',
+      component: Lev1_3Page
     }
   ]
 })

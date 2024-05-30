@@ -11,7 +11,7 @@ import pyttsx3
 import random
 from random import shuffle
 from Levenshtein import distance
-
+import spacy
 
 translator = Translator(service_urls=['translate.googleapis.com'])
 rec = sr.Recognizer()
@@ -19,6 +19,7 @@ rec = sr.Recognizer()
 language = ""
 audio = None
 expected_sen = ""
+right_answer = ""
 
 #key:ex, value = list of tuples (phrase, word position of guessed word) for ex 1, for ex 3 (phrase,None)
 lev1_phrases = {"1": [("My mother is a good hiker", 2),("Elena had chicken pox when she was six",1), ("See this cat, it is striped",1),
@@ -82,7 +83,6 @@ def choose_and_translate(phrase_list,options_list, ex):
 #function that records an audio file 
 def record():
     mic = sr.Microphone()
-    
     with mic as source:
         rec.adjust_for_ambient_noise(source)
         global audio
@@ -112,7 +112,7 @@ def postLanguage():
 
 @app.route("/lev1/phrases", methods=["GET"])
 #get the text of exercise
-def get_phrase_ex1():
+def get_phrase():
     phrase,options = choose_and_translate(lev1_phrases,lev1_options,request.args.get('ex',''))
     #dict key:number of option, value:parola
     d = {str(i):opt for (i,opt) in zip(range(len(options)),options)}
@@ -121,11 +121,10 @@ def get_phrase_ex1():
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response 
     
-@app.route("/lev1/ex1/audio", methods=["POST"])
+@app.route("/lev1/ex1/record", methods=["POST"])
 #record audio
 def record_audio():
     global audio
-    global score
     data = request.get_json()
     audio = record()
     return jsonify(True) if(data["data"] == right_answer) else jsonify(False)
@@ -146,17 +145,9 @@ def textify_audio():
     except sr.UnknownValueError:
         print("Oops! Didn't catch that")
         return jsonify("Oops! Didn't catch that")
-    
-@app.route("/lev1/ex3", methods=["GET"])
-def get_phrase_ex3():
-    phrase,options = choose_and_translate(lev1_phrases,lev1_options,"3")
-    d = {str(i):opt for (i,opt) in zip(range(len(options)),options)}
-    d['phrase']=phrase
-    response = jsonify(d)
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
 
 @app.route("/lev1/ex3/answer", methods=["POST"])
+#see if expected stentence is matched
 def get_result():
     submitted_phrase = request.get_json()['phrase']
     if submitted_phrase.strip()==expected_sen:
@@ -174,6 +165,60 @@ def prononuce_phrase():
     engine.runAndWait()
     return jsonify("success")
 
-      
+nlp = spacy.load("en_core_web_sm")
+#it_core_news_sm
+answers = {
+    "tool": ["hammer", "shovel", "scissor"],
+    "clothe": ["shirt", "trouser", "dress"],
+    "fruit": ["apple", "banana", "passion fruit"]
+}
+def reveal_list(doc):
+    for token in doc:
+        if token.lemma_ in answers:
+            answers_type = token.lemma_
+            answers_list = ", ".join(answers[answers_type])
+            return f"Which kind of {answers_type} do you want to buy ? We currently have these available: {answers_list}."
+    return "I couldn't understand. Can you repeat?"
+
+@app.route("/lev3/conversation", methods=["POST"])
+def handle_input():
+    phrase = request.get_json()
+    phrase = phrase["data"]
+    if phrase.lower() in ["quit", "bye", "end"]:
+        return jsonify("Goodbye!")
+    else:
+        doc = nlp(translator.translate(phrase.lower(),src=language, dest="en").text)
+        #for token in doc: print(token.lemma_)
+        answer = ""
+        if any(token.lemma_ in ["tool", "clothe", "fruit"] for token in doc):
+            answer = reveal_list(doc)
+        elif any(token.lemma_ in answers["tool"] or token.lemma_ in answers["clothe"] for token in doc):
+            answer = "Would you like to have it now or delivered?"
+        elif any(token.lemma_ in ["here", "now"] or token.lemma_ in answers["fruit"] for token in doc):
+            answer = "Would you like to pay cash or by card?" 
+        elif any(token.lemma_ in ["deliver", "home"] for token in doc):
+            answer = "Can I get your address?" 
+        elif any(token.lemma_ in ["address", "street", "avenue", "live"]  for token in doc):
+            answer = "Ok, you can pay once delivered. Thanks for the purchase. Have a nice day!"
+        elif any(token.lemma_ in ["cash", "card"] for token in doc):
+            answer = "Ok, thanks for the purchase. Have a nice day!"
+        else: 
+            answer = "I didn't understand. Can you repeat?"   
+        return translator.translate(answer,src="en", dest=language).text
+
+@app.route("/lev3/conversation", methods=["GET"])
+#get the tedxt of the message in level 3
+def get_pronounced_phrase():
+    text_of_speech = speech_to_text(audio)
+    return jsonify(text_of_speech)
+
+@app.route("/lev3/record", methods=["POST"])
+#record the message in level 3
+def record_lev3():
+    global audio
+    audio = record()
+    return jsonify("Registrato")
+
+
 if __name__ == '__main__':
     app.run()

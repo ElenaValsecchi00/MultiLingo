@@ -62,7 +62,7 @@ export default {
     },
     methods: {  
         fetchPhrase(){
-        axios.get('http://127.0.0.1:5000/lev1/phrases',{params:{ex:"3"}})
+        axios.get('http://127.0.0.1:/lev1/phrases',{params:{ex:"3"}})
         .then(response => {
           console.log(response.data);
           // do something with response.data
