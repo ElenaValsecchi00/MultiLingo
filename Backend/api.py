@@ -112,6 +112,13 @@ def postLanguage():
     language = context["language"]
     return language
 
+@app.route("/lev2/getLanguage", methods=["POST"])
+def get_language():
+    context = request.get_json(force=True)
+    global startingLanguage
+    startingLanguage = context["startingLanguage"]
+    return startingLanguage
+
 @app.route("/lev1/phrases", methods=["GET"])
 #get the text of exercise
 def get_phrase():
@@ -164,6 +171,18 @@ def prononuce_phrase():
     engine = pyttsx3.init()
     engine.setProperty('rate', 150)
     engine.say(expected_sen)
+    engine.runAndWait()
+    return jsonify("success")
+
+@app.route("/lev2/pronounce", methods=["GET"])
+def pron_phrase_2():
+    #pronounce the sentence
+    engine = pyttsx3.init()
+    engine.setProperty('rate', 150)
+    index = random.randrange(0,len(lev2_phrases)["1"])
+    phrase = lev2_phrases["1"][index] 
+    phrase = translator.translate(phrase,src="en", dest=startingLanguage)
+    engine.say(phrase)
     engine.runAndWait()
     return jsonify("success")
 
@@ -222,12 +241,6 @@ def record_lev3():
     return jsonify("Registrato")
 
 
-@app.route("/lev2/getLanguage", methods=["POST"])
-def get_language():
-    context = request.get_json(force=True)
-    global startingLanguage
-    startingLanguage = context["startingLanguage"]
-    return startingLanguage
 
 @app.route("/lev2/phrases", methods=["GET"])
 #get the text of exercise

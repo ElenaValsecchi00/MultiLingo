@@ -14,21 +14,19 @@
         
         <div>
             <p>{{ $t("assignment.header_2_2") }}</p>
-            <p>{{ this.phrase }}</p>
+
             <button class="buttonAudio" @click="startListening()" :class="{'clickable': listening}">
             <img  class="audioImg"  
             :src="listening ? imageListening : imageNotListening">
             </button>
+            <div><p class="text" >{{this.message}}</p></div>
         </div>
-
-        <div class="options">
-            <div v-for="(name, index) in this.options">
-                <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index }"
-                 @click="selectParagraph(index)">
-                {{ name }}
-            </p>
-            </div>
-        </div>
+        
+        <!--When pressed first time starts recording, when pressed second time stops-->
+        <button class="buttonAudio" :disabled="disabledMic" @click="startRecordAudio" :class="{'clickable': recording}">
+            <img  class="audioImg"  
+            :src="recording ? imageRecording : imageNotRecording">
+        </button>
         
         <button class="buttonConferma" :disabled="disabledConfirm" @click="goOn()">{{ $t("assignment.confirm") }}</button>
     
@@ -42,13 +40,15 @@ import axios from "axios"
 export default {
     data() {
         return {
+            message:null,
             flag: null,
-            selectedParagraph: null,
-            phrase: null,
-            options: null,
             listening: false,
+            recording: false,
             imageNotListening: '../../audio/volumedown.png',
             imageListening: '../../audio/volumeup.png',
+            imageNotRecording: '../../micro/microphone.png',
+            imageRecording: '../../micro/listening.png',
+            disabledMic: true,
             disabledConfirm: true,
             score: 0
         };
@@ -57,50 +57,53 @@ export default {
     created(){
         this.flag = this.$route.params.language;
         this.src = '../../flags/' + this.flag + ".png";
-        this.fetchPhrase();
+        
     },
     mounted() {
         
     },
     methods: {  
-        fetchPhrase(){
-        axios.get('http://127.0.0.1:5000/lev1/phrases',{params:{ex:"2"}})
-        .then(response => {
-        // do something with response.data
-         let dict = response.data;
-         this.phrase = dict['phrase']
-         this.options = Object.keys(dict)
-        .filter((key) => key!=='phrase')
-        .reduce((obj, key) => {
-            return Object.assign(obj, {
-            [key]: dict[key]
-            });
-        }, {});
-        })
-        .catch(error => {
-          console.error(error);
-        });
-        },
-        selectParagraph(index) {
-        this.selectedParagraph = this.selectedParagraph === index ? null : index;
-        this.disabledConfirm = this.selectedParagraph === null? true : false;
-        },
         startListening(){
+            this.disabledMic = false
             this.listening = this.listening === false? true : false;
-            axios.get('http://127.0.0.1:5000/lev1/pronounce')
+            axios.get('http://127.0.0.1:5000/lev2/pronounce')
             .then(response => {
                 console.log(response.data)
                 this.listening = false;
+                
             })
             .catch(error => {
                 console.error(error);
+            });
+        },
+        //function that prompts backend to record and gets the speech to text
+        startRecordAudio(){
+            this.recording = true;
+            axios.post('http://127.0.0.1:5000/lev3/record')
+            .then(response => { 
+                this.stopRecordAudio()
+            })
+            .catch(error => {
+                console.log(error)
+            });
+        },  
+        stopRecordAudio(){
+            this.recording = false;
+            axios.get('http://127.0.0.1:5000/lev3/conversation')
+            .then(response => { 
+                console.log(response.data)
+                this.disabledConfirm = false;
+                this.message = response.data;
+            })
+            .catch(error => {
+                console.log(error)
             });
         },
         goBack(){
         router.go(-1);
         },
         goOn(){
-            router.push({name:"lev1_3", params: this.flag})
+            //***where*** 
         }
     }
     };
@@ -111,6 +114,16 @@ body{
     background-color: #FBF2D4;
 }
 
+.text{
+    width: auto;
+    height: 60px;
+    background-color: white;
+    border-radius: 10px;
+    font-size: 20px;
+    margin: 10em 2em;
+    padding: 20px;
+   
+}
 
 .buttonConferma {
     position:absolute;
@@ -147,8 +160,9 @@ body{
     border-color: transparent;
     cursor: pointer;
 }
-.options{
-    margin-top: 30vh;
+.buttonAudio:disabled{
+    background-color: rgba(172, 160, 160, 0.806);
+    cursor: not-allowed;
 }
 
 .audioImg{

@@ -95,7 +95,6 @@ export default {
             });
         },
         goOn(){
-            //*** to write 2_2 ***
             router.push({name:"lev2_2", params: this.flag})
         }
     }
@@ -174,7 +173,7 @@ body{
 }
 .text{
     width: auto;
-    height: 50px;
+    height: 60px;
     background-color: white;
     border-radius: 10px;
     font-size: 20px;
