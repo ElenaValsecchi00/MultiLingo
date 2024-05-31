@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LandingPage from '../components/LandingPage.vue'
 import ChooseLevelPage from '../components/ChooseLevel.vue'
 import Lev1Page from '../components/Lev1.vue'
+import Lev2Page from '../components/Lev2.vue'
 import Lev1_2Page from '../components/Lev1_2.vue'
 import Lev1_3Page from '../components/Lev1_3.vue'
 import Lev3Page from '../components/Lev3.vue'
@@ -24,6 +25,11 @@ const router = createRouter({
       path: '/:language/lev1',
       name: 'lev1',
       component: Lev1Page
+    },
+    {
+      path: '/:language/lev2',
+      name: 'lev2',
+      component: Lev2Page
     },
     {
       path: '/:language/lev3',
