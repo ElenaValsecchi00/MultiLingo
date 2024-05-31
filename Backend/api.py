@@ -32,6 +32,8 @@ lev1_options = {"1":[("are", "have"),("was", "have"), ("there", "these"), ("a", 
                      ("due", "of", "these","dude"),
                      ("that", "could", "pounding", "deal","He")],
                 "2":[("yellow", "red"),("enjoy","don't like"), ("child","cat")]}
+lev2_phrases = {"1": [("This hat really suits me"),("I would love to go out with you"), ("I wish I could speak French")]}
+
 UPLOAD_FOLDER = 'audios'
 
 app = Flask(__name__)
@@ -219,6 +221,25 @@ def record_lev3():
     audio = record()
     return jsonify("Registrato")
 
+
+@app.route("/lev2/getLanguage", methods=["POST"])
+def get_language():
+    context = request.get_json(force=True)
+    global startingLanguage
+    startingLanguage = context["startingLanguage"]
+    return startingLanguage
+
+@app.route("/lev2/phrases", methods=["GET"])
+#get the text of exercise
+def get_phrase_2():
+    ex = request.args.get('ex','')
+    index = random.randrange(0,len(lev2_phrases[ex]))
+    phrase = lev2_phrases[ex][index] 
+    translation_phrase = translator.translate(phrase,src="en", dest=startingLanguage)
+    print(startingLanguage, language)
+    response = jsonify(translation_phrase.text)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response 
 
 if __name__ == '__main__':
     app.run()

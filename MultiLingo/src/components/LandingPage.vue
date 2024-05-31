@@ -25,7 +25,7 @@ export default {
           router.push({name:route, params:{language}})
       },
       sendLanguage(language) {    
-        axios.post('http://127.0.0.1:5000/', {language:language})
+        axios.post('http://127.0.0.1:5000/', {language:language, ex: 1})
         .then(response => { 
             console.log(response)
         })

@@ -51,7 +51,12 @@ export default{
         router.go(-1);
     },
     goEx(i){
-        router.push({name:"lev" + i, params: this.flag});
+        if(i === 2){
+            router.push({name:"lev" + i + "choice", params: this.flag});
+        }else{
+            router.push({name:"lev" + i, params: this.flag});
+        }
+        
     }
 }
 };
