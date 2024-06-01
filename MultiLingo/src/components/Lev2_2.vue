@@ -15,7 +15,7 @@
         <div>
             <p>{{ $t("assignment.header_2_2") }}</p>
 
-            <button class="buttonAudio" @click="startListening()" :class="{'clickable': listening}">
+            <button class="buttonAudio speaker" @click="startListening()" :class="{'clickable': listening}">
             <img  class="audioImg"  
             :src="listening ? imageListening : imageNotListening">
             </button>
@@ -23,7 +23,7 @@
         </div>
         
         <!--When pressed first time starts recording, when pressed second time stops-->
-        <button class="buttonAudio" :disabled="disabledMic" @click="startRecordAudio" :class="{'clickable': recording}">
+        <button class="buttonAudio mic" :disabled="disabledMic" @click="startRecordAudio" :class="{'clickable': recording}">
             <img  class="audioImg"  
             :src="recording ? imageRecording : imageNotRecording">
         </button>
@@ -116,7 +116,7 @@ body{
 
 .text{
     width: auto;
-    height: 60px;
+    height: 100px;
     background-color: white;
     border-radius: 10px;
     font-size: 20px;
@@ -152,7 +152,7 @@ body{
     height: auto;
     text-align: center;
     left: 0; 
-    right: 0; 
+    right: 0;   
     margin-left: auto; 
     margin-right: auto; 
     background: #C3E986;
@@ -160,6 +160,15 @@ body{
     border-color: transparent;
     cursor: pointer;
 }
+
+.mic{
+    bottom:100px;
+}
+
+.speaker{
+    bottom:500px;
+}
+
 .buttonAudio:disabled{
     background-color: rgba(172, 160, 160, 0.806);
     cursor: not-allowed;

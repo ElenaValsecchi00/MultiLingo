@@ -76,6 +76,7 @@ def choose_and_translate(phrase_list,options_list, ex):
         translation_options.extend(translation_phrase.text.split())
         shuffle(translation_options)
         translation_phrase = translation_phrase.text
+        print('tradotta')
     if ex=="2":
         right_option = phrase_list[ex][index][1]
         translation_phrase, translation_options= substitute_with_blank(translation_phrase, translation_options, right_option)
@@ -179,9 +180,9 @@ def pron_phrase_2():
     #pronounce the sentence
     engine = pyttsx3.init()
     engine.setProperty('rate', 150)
-    index = random.randrange(0,len(lev2_phrases)["1"])
+    index = random.randrange(0,len(lev2_phrases["1"]))
     phrase = lev2_phrases["1"][index] 
-    phrase = translator.translate(phrase,src="en", dest=startingLanguage)
+    phrase = translator.translate(phrase,src="en", dest=startingLanguage).text
     engine.say(phrase)
     engine.runAndWait()
     return jsonify("success")
