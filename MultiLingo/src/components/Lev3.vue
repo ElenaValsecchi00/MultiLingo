@@ -74,6 +74,7 @@ export default {
             .then(response => { 
                 console.log(response.data)
                 this.conversation.push(response.data)
+                this.message = null
                 router.go(-1);
             })
             .catch(error => {
