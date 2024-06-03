@@ -17,7 +17,7 @@
         </div>
         <div class="options">
             <div v-for="(name, index) in this.options">
-                <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index }"
+                <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index , 'wrongAnswer': selectedParagraph === index & wrongAnswer }"
                  @click="selectParagraph(index)">
                 {{ name }}
             </p>
@@ -38,10 +38,10 @@
 <script>
 import router from '@/router';
 import axios from "axios"
-
 export default {
     data() {
         return {
+            wrongAnswer: false,
             flag: null,
             selectedParagraph: null,
             phrase: null,
@@ -52,7 +52,7 @@ export default {
             recorder:null,
             disabledMic: true,
             disabledConfirm: true,
-            score: 0
+            results1_1:0
         };
     },
 
@@ -92,16 +92,31 @@ export default {
         goBack(){
         router.go(-1);
         },
-        //function that prompts backend to record and gets the speech to text
-        startRecordAudio(){
-            this.recording = true;
+        checkAnswer(){
             const answer = this.options[this.selectedParagraph]
-            axios.post('http://127.0.0.1:5000/lev1/ex1/record', {data: answer})
+            axios.post('http://127.0.0.1:5000/lev1/ex1_2/check', {data: answer, ex: "1"})
             .then(response => { 
                 console.log(response.data, answer)
                 if (response.data) {
-                    this.score += 0.5
+                    //if true the answer clicked was right
+                    results1_1 += 0.5
+                    this.wrongAnswer = false
+                }else{
+                    //false the answer clicked was wrong
+                    this.wrongAnswer = true
                 }
+            })
+            .catch(error => {
+                console.log(error)
+            });
+        },
+        //function that prompts backend to record and gets the speech to text
+        startRecordAudio(){
+            this.recording = true;
+            
+            axios.post('http://127.0.0.1:5000/lev1/ex1/record')
+            .then(response => { 
+                console.log(response.data)
                 this.stopRecordAudio()
             })
             .catch(error => {
@@ -113,12 +128,9 @@ export default {
             axios.get('http://127.0.0.1:5000/lev1/ex1/audio')
             .then(response => { 
                 console.log(response.data)
-                if(response.data){
-                    console.log("tutto corretto")
-                    this.score += 0.5
-                    console.log(this.score)
+                if (response.data){
+                    results1_1 += 0.5
                 }
-                
                 this.disabledConfirm = false
             })
             .catch(error => {
@@ -126,7 +138,9 @@ export default {
             });
         },
         goOn(){
-            router.push({name:"lev1_2", params: this.flag})
+            this.checkAnswer()
+            setTimeout(function(){router.push({name:"lev1_2", params: this.flag})}, 1000)
+            
         }
     }
     };
@@ -135,6 +149,7 @@ export default {
 <style scoped>
 body{
     background-color: #FBF2D4;
+    
 }
 
 .options{
@@ -197,7 +212,9 @@ body{
     transform: scale(0.95);
     transition: transform 0.5s ease;
 }
-
+.wrongAnswer{
+    background-color: red;
+}
 .container{
     position:relative;
     margin:0cap;

@@ -20,7 +20,6 @@ language = ""
 audio = None
 expected_sen = ""
 right_answer = ""
-
 #key:ex, value = list of tuples (phrase, word position of guessed word) for ex 1, for ex 3 (phrase,None)
 lev1_phrases = {"1": [("My mother is a good hiker", 2),("Elena had chicken pox when she was six",1), ("See this cat, it is striped",1),
                        ("My mother is one amongst the english teachers of the school",3)],
@@ -135,11 +134,8 @@ def get_phrase():
 #record audio
 def record_audio():
     global audio
-    data = request.get_json()
     audio = record()
-    return jsonify(True) if(data["data"] == right_answer) else jsonify(False)
-    #return data
-
+    return jsonify("andato a buon fine")
 @app.route("/lev1/ex1/audio", methods=["GET"])
 #speech to text
 def textify_audio():
@@ -156,14 +152,26 @@ def textify_audio():
         print("Oops! Didn't catch that")
         return jsonify("Oops! Didn't catch that")
 
+@app.route("/lev1/ex1_2/check", methods=["POST"])
+#record audio
+def check():
+    data = request.get_json()
+    #check if clicked option is correct
+    if(data["data"] == right_answer):
+        return jsonify(True)
+    else:
+        return jsonify(False)
+
+
+
 @app.route("/lev1/ex3/answer", methods=["POST"])
 #see if expected stentence is matched
 def get_result():
     submitted_phrase = request.get_json()['phrase']
     if submitted_phrase.strip()==expected_sen:
-        return jsonify("Corretto")
+        return jsonify(True)
     else:
-        return jsonify("Sbagliato")
+        return jsonify(False)
 
 
 @app.route("/lev1/pronounce", methods=["GET"])
@@ -254,6 +262,7 @@ def get_phrase_2():
     response = jsonify(translation_phrase.text)
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response 
+
 
 if __name__ == '__main__':
     app.run()

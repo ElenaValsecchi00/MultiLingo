@@ -19,11 +19,11 @@
         </div>
        
         <div class="inputText">
-            <p class="text">{{guessedPhrase}}</p>
+            <p class="text" :class="{'wrongAnswer': wrongAnswer}">{{guessedPhrase}}</p>
         </div>
         <div class="options">
             <div v-for="(name, index) in this.options">
-                <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index }"
+                <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index}"
                  @click="selectParagraph(index)">
                 {{ name }}
             </p>
@@ -41,6 +41,7 @@ import axios from "axios"
 export default {
     data() {
         return {
+            wrongAnswer: null,
             flag: null,
             selectedParagraph: null,
             phrase: null,
@@ -84,11 +85,20 @@ export default {
         get_result(){
             axios.post('http://127.0.0.1:5000/lev1/ex3/answer', {phrase:this.guessedPhrase})
             .then(response => {
-            console.log(response.data);
+                console.log(response.data)
+                if(response.data){
+                    //the answer was correct
+                    this.wrongAnswer = false
+                }
+                else{
+                    //mistakes were made
+                    this.wrongAnswer = true
+                }
             })
             .catch(error => {
-            console.error(error);
+                console.error(error);
             });
+            setTimeout(function(){router.push({name:"result1", params: this.flag})}, 1000)
         },
         selectParagraph(index) {
         this.selectedParagraph = this.selectedParagraph === index ? null : index;
@@ -115,6 +125,7 @@ export default {
             }
         }
     };
+
 </script>
 
 <style scoped>
@@ -197,13 +208,14 @@ body{
     margin-top: 1cap;
     margin-right: 1cap;
 }
-
+.wrongAnswer{
+    background-color: rgb(255, 0, 0);
+}
 .inputText{
     padding:20px;
     margin-top:15vh;
 
 }
-
 .text{
     width: auto;
     height: 100px;
