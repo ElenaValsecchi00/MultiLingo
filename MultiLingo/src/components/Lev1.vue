@@ -128,10 +128,11 @@ export default {
             axios.get('http://127.0.0.1:5000/lev1/ex1/audio')
             .then(response => { 
                 console.log(response.data)
+                this.disabledConfirm = false
                 if (response.data){
                     results1_1 += 0.5
                 }
-                this.disabledConfirm = false
+                
             })
             .catch(error => {
                 console.log(error)

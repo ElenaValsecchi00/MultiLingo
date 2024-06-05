@@ -18,21 +18,32 @@ import router from '../router';
 import axios from 'axios';
 
 export default {
+  
     methods: {
         goToLanguage(route,language){
           i18n.global.locale.value=language;
           this.sendLanguage(language);
+          this.listen_in_back();
           router.push({name:route, params:{language}})
       },
       sendLanguage(language) {    
-        axios.post('http://127.0.0.1:5000/', {language:language, ex: 1})
+        axios.post('http://127.0.0.1:5000/', {language:language})
         .then(response => { 
             console.log(response)
         })
         .catch(error => {
             console.log(error)
         });
-        }
+        },
+        listen_in_back(){
+        axios.post('http://127.0.0.1:5000/background')
+        .then(response => { 
+            console.log(response)
+        })
+        .catch(error => {
+            console.log(error)
+        });
+    }
     }
     };
 </script>

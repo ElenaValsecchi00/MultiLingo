@@ -45,6 +45,7 @@ export default{
     this.flag = this.$route.params.language;
     // Composizione della stringa utilizzando il parametro della route
     this.src = '../../flags/' + this.flag + ".png";
+    
   },
   methods: {
     goBack(){

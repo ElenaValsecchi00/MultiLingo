@@ -12,14 +12,19 @@ import random
 from random import shuffle
 from Levenshtein import distance
 import spacy
+import time
+
+keywords = [("confirm", 1), ("back", 1), ]
 
 translator = Translator(service_urls=['translate.googleapis.com'])
 rec = sr.Recognizer()
+mic = sr.Microphone()
 
 language = ""
 audio = None
 expected_sen = ""
 right_answer = ""
+stop_in_back = None
 #key:ex, value = list of tuples (phrase, word position of guessed word) for ex 1, for ex 3 (phrase,None)
 lev1_phrases = {"1": [("My mother is a good hiker", 2),("Elena had chicken pox when she was six",1), ("See this cat, it is striped",1),
                        ("My mother is one amongst the english teachers of the school",3)],
@@ -85,6 +90,7 @@ def choose_and_translate(phrase_list,options_list, ex):
 #function that records an audio file 
 def record():
     mic = sr.Microphone()
+    rec = sr.Recognizer()
     with mic as source:
         rec.adjust_for_ambient_noise(source)
         global audio
@@ -112,6 +118,34 @@ def postLanguage():
     language = context["language"]
     return language
 
+def callback(recognizer, audio):  # this is called from the background thread
+    try:
+        speech_as_text = recognizer.recognize_google(audio, language = language)
+        print(speech_as_text)
+
+        # Look for your "Ok Google" keyword in speech_as_text
+        if translator.translate("confirm", dest=language).text in speech_as_text.lower():
+            recognize_main()
+    except sr.UnknownValueError:
+        print("Oops! Didn't catch that")
+
+
+def recognize_main():
+    print("Recognizing Main...")
+    stop_in_back(wait_for_stop=False)
+    while True: time.sleep(0.1) 
+    # interpret the user's words however you normally interpret them
+
+
+@app.route("/background", methods=["POST"])
+#start to listen in background
+def start_recognizer():
+    global stop_in_back
+    stop_in_back = rec.listen_in_background(mic, callback)
+    print("cocorita")
+    time.sleep(1.2) # we're still listening even though the main thread is blocked
+    
+
 @app.route("/lev2/getLanguage", methods=["POST"])
 def get_language():
     context = request.get_json(force=True)
@@ -134,8 +168,10 @@ def get_phrase():
 #record audio
 def record_audio():
     global audio
+
     audio = record()
     return jsonify("andato a buon fine")
+
 @app.route("/lev1/ex1/audio", methods=["GET"])
 #speech to text
 def textify_audio():
