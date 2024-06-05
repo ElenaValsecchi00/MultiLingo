@@ -12,7 +12,7 @@
         </header>
         
         <p>{{ $t("assignment.header_1_3") }}</p>
-        <div class="scrollable"> 
+        <div class="scrollable" ref="scroll"> 
             <h3 class="text">{{ $t("assignment.header_3") }}</h3>
             <div v-for="(name, index) in this.conversation">
                 <h3 class="text" :class="{ 'answer': index % 2 == 0}">{{ name }}</h3> 
@@ -75,6 +75,9 @@ export default {
                 console.log(response.data)
                 this.conversation.push(response.data)
                 this.message = null
+                this.$nextTick(() => {
+                    this.$refs.scroll.scrollTop = this.$refs.scroll.scrollHeight
+                })
                 router.go(-1);
             })
             .catch(error => {
@@ -98,7 +101,10 @@ export default {
             .then(response => { 
                 console.log(response.data)
                 this.disabledConfirm = false;
-                this.message = response.data;
+                this.message = response.data["data"];
+                this.$nextTick(() => {
+                    this.$refs.scroll.scrollTop = this.$refs.scroll.scrollHeight
+                })
             })
             .catch(error => {
                 console.log(error)

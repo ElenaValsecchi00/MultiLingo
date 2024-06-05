@@ -291,7 +291,15 @@ def handle_input():
 def get_pronounced_phrase():
     text_of_speech = speech_to_text(audio)
     matches = tool.check(text_of_speech)
-    response = {"data": text_of_speech, "numerrors": len(matches), "errors": str(matches)}
+    errors = []
+    for match in matches:
+        errors.append({
+            'message': match.message,
+            'offset': match.offset,
+            'length': match.errorLength,
+            'replacements': match.replacements
+        })
+    response = {"data": text_of_speech, "numerrors": len(matches), "errors": errors}
     return response
 
 @app.route("/lev3/record", methods=["POST"])

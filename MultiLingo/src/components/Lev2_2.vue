@@ -19,7 +19,8 @@
             <img  class="audioImg"  
             :src="listening ? imageListening : imageNotListening">
             </button>
-            <div><p class="text" >{{this.message}}</p></div>
+            <p class="text" >{{this.message}}</p>
+            <p>Errors: {{this.numerrors}}, {{this.errors}}</p>
         </div>
         
         <!--When pressed first time starts recording, when pressed second time stops-->
@@ -27,7 +28,6 @@
             <img  class="audioImg"  
             :src="recording ? imageRecording : imageNotRecording">
         </button>
-        
         <button class="buttonConferma" :disabled="disabledConfirm" @click="goOn()">{{ $t("assignment.confirm") }}</button>
     
     </body>
@@ -50,7 +50,9 @@ export default {
             imageRecording: '../../micro/listening.png',
             disabledMic: true,
             disabledConfirm: true,
-            score: 0
+            score: 0,
+            errors: null,
+            numerrors: 0
         };
     },
 
@@ -93,7 +95,9 @@ export default {
             .then(response => { 
                 console.log(response.data)
                 this.disabledConfirm = false;
-                this.message = response.data;
+                this.message = response.data["data"];
+                this.errors = response.data["errors"]["message"]
+                this.numerrors = response.data["numerrors"]
             })
             .catch(error => {
                 console.log(error)
@@ -104,6 +108,7 @@ export default {
         },
         goOn(){
             //***where*** 
+            setTimeout(function(){router.push({name:"result1", params: this.flag})}, 1000)
         }
     }
     };
@@ -119,8 +124,8 @@ body{
     height: 100px;
     background-color: white;
     border-radius: 10px;
+    margin: 160px 10px 2px 10px;
     font-size: 20px;
-    margin: 10em 2em;
     padding: 20px;
    
 }

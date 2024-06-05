@@ -37,6 +37,7 @@ export default {
     created(){
         this.flag = this.$route.params.language;
         this.src = '../../flags/' + this.flag + ".png";
+        
         this.getResults()
     },
     mounted() {
