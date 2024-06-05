@@ -25,6 +25,10 @@ audio = None
 expected_sen = ""
 right_answer = ""
 stop_in_back = None
+
+results1_1 = 0
+results1_2 = 0
+results1_3 = 0
 #key:ex, value = list of tuples (phrase, word position of guessed word) for ex 1, for ex 3 (phrase,None)
 lev1_phrases = {"1": [("My mother is a good hiker", 2),("Elena had chicken pox when she was six",1), ("See this cat, it is striped",1),
                        ("My mother is one amongst the english teachers of the school",3)],
@@ -180,6 +184,8 @@ def textify_audio():
     try:
         #check if word has been pronounced correctly
         if is_sentence_correct(text_of_speech):
+            results1_1 += 0.5
+            print(results1_1)
             response = jsonify(True)
             response.headers["Access-Control-Allow-Origin"] = "*"
             return response
@@ -194,6 +200,11 @@ def check():
     data = request.get_json()
     #check if clicked option is correct
     if(data["data"] == right_answer):
+        ex = request.args.get('ex','')
+        if ex == "1":
+            results1_1 += 0.5
+        else:
+            results1_2 = 1
         return jsonify(True)
     else:
         return jsonify(False)
@@ -205,6 +216,7 @@ def check():
 def get_result():
     submitted_phrase = request.get_json()['phrase']
     if submitted_phrase.strip()==expected_sen:
+        results1_3 = 1
         return jsonify(True)
     else:
         return jsonify(False)
@@ -299,6 +311,15 @@ def get_phrase_2():
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response 
 
+@app.route("/lev1/results", methods=["GET"])
+def lev1Results():
+    results = {}
+    results["1"] = results1_1
+    results["2"] = results1_2
+    results["3"] = results1_3
+    response = jsonify(results)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response 
 
 if __name__ == '__main__':
     app.run()

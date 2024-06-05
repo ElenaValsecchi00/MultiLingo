@@ -38,6 +38,7 @@
 <script>
 import router from '@/router';
 import axios from "axios"
+
 export default {
     data() {
         return {
@@ -51,8 +52,7 @@ export default {
             imageRecording: '../../micro/listening.png',
             recorder:null,
             disabledMic: true,
-            disabledConfirm: true,
-            results1_1:0
+            disabledConfirm: true
         };
     },
 
@@ -99,7 +99,6 @@ export default {
                 console.log(response.data, answer)
                 if (response.data) {
                     //if true the answer clicked was right
-                    results1_1 += 0.5
                     this.wrongAnswer = false
                 }else{
                     //false the answer clicked was wrong
@@ -129,10 +128,6 @@ export default {
             .then(response => { 
                 console.log(response.data)
                 this.disabledConfirm = false
-                if (response.data){
-                    results1_1 += 0.5
-                }
-                
             })
             .catch(error => {
                 console.log(error)
@@ -141,7 +136,6 @@ export default {
         goOn(){
             this.checkAnswer()
             setTimeout(function(){router.push({name:"lev1_2", params: this.flag})}, 1000)
-            
         }
     }
     };

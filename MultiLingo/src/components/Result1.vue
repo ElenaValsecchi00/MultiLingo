@@ -12,10 +12,9 @@
         </header>
         <div>
             <p>{{ $t("assignment.header_result_1") }}</p>
-            <p>E-1: {{ this.results1_1}}</p>
-            <p>E-2: </p>
-            <p>E-3: </p>
-            
+            <p>E-1: {{ this.result1_1}} /1</p>
+            <p>E-2: {{ this.result1_2}} /1</p>
+            <p>E-3: {{ this.result1_3}} /1</p>
         </div>
         <button class="buttonConferma" @click="goOn()">{{ $t("assignment.confirm") }}</button>
     
@@ -24,18 +23,21 @@
   
 <script>
 import router from '@/router';
-//import {results1_1} from '@/components/Lev1.vue'
-
+import axios from "axios"
 export default {
     data() {
         return {
-            flag: null
+            flag: null,
+            result1_1: '',
+            result1_2: '',
+            result1_3: ''
         };
     },
 
     created(){
         this.flag = this.$route.params.language;
         this.src = '../../flags/' + this.flag + ".png";
+        this.getResults()
     },
     mounted() {
         
@@ -47,6 +49,15 @@ export default {
         goBack(){
         router.go(-1);
         },
+        getResults(){
+            axios.get('http://127.0.0.1:5000/lev1/results')
+        .then(response => {
+            console.log(response.data)
+            this.result1_1 = response.data["1"]
+            this.result1_2 = response.data["2"]
+            this.result1_3 = response.data["3"]
+        })
+        }
     }
     };
 </script>
