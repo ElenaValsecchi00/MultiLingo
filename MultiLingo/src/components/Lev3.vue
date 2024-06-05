@@ -21,8 +21,8 @@
         
         <div class="message">
             <form>
-            <p class="textanswer" >{{this.message}}</p>
-            <a href="#" v-on:click="getNextQuestion()" id="submit">SUBMIT</a>
+            <input class="languageinput" v-model="message"></input>
+            <a class="send" href="#" v-on:click="getNextQuestion()" id="submit">SEND</a>
             </form>
         </div>
         <!--When pressed first time starts recording, when pressed second time stops-->
@@ -118,7 +118,18 @@ export default {
 body{
     background-color: #FBF2D4;
 }
-
+.send{
+    margin-right:55px
+}
+.languageinput{
+  border-radius: 10px;
+  top:200px;
+  left:30px;
+  width:250px;
+  height:70px;
+  text-align: center;
+  border-color: transparent;
+}
 #submit{
     text-align: right;
     position: relative;
