@@ -16,6 +16,8 @@
             <p>{{ this.phrase }}</p>
             <p class="text" >{{this.message}}</p>
         </div>
+        <p class="text" >Errors: {{this.numerrors}}, {{this.errors}}</p>
+        
         
         <!--When pressed first time starts recording, when pressed second time stops-->
         <button class="buttonAudio" @click="startRecordAudio" :class="{'clickable': recording}">
@@ -45,7 +47,9 @@ export default {
             recorder:null,
             disabledMic: true,
             disabledConfirm: true,
-            score: 0
+            score: 0,
+            errors: "",
+            numerrors: 0
         };
     },
 
@@ -88,7 +92,9 @@ export default {
             .then(response => { 
                 console.log(response.data)
                 this.disabledConfirm = false;
-                this.message = response.data;
+                this.message = response.data["data"];
+                this.errors = response.data["errors"]["message"]
+                this.numerrors = response.data["numerrors"]
             })
             .catch(error => {
                 console.log(error)

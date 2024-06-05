@@ -13,7 +13,9 @@ from random import shuffle
 from Levenshtein import distance
 import spacy
 import time
+import language_tool_python
 
+tool = language_tool_python.LanguageTool('en')
 keywords = [("confirm", 1), ("back", 1), ]
 
 translator = Translator(service_urls=['translate.googleapis.com'])
@@ -288,7 +290,9 @@ def handle_input():
 #get the tedxt of the message in level 3
 def get_pronounced_phrase():
     text_of_speech = speech_to_text(audio)
-    return jsonify(text_of_speech)
+    matches = tool.check(text_of_speech)
+    response = {"data": text_of_speech, "numerrors": len(matches), "errors": str(matches)}
+    return response
 
 @app.route("/lev3/record", methods=["POST"])
 #record the message in level 3
@@ -296,8 +300,6 @@ def record_lev3():
     global audio
     audio = record()
     return jsonify("Registrato")
-
-
 
 @app.route("/lev2/phrases", methods=["GET"])
 #get the text of exercise
