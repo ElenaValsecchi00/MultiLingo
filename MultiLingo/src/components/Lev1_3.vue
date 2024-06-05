@@ -18,13 +18,18 @@
             </button>
         </div>
        
-        <div class="inputText">
-            <p class="text" :class="{'wrongAnswer': wrongAnswer}">{{guessedPhrase}}</p>
+        
+        <div class="options inputText text">
+            <div v-for="(name, index) in this.optionsChosen">
+                <p class="clickable-div" @click="removeOption(index)">
+                {{ name }}
+            </p>
+        </div>
+            <!--<p class="text" :class="{'wrongAnswer': wrongAnswer}">{{guessedPhrase}}</p>-->
         </div>
         <div class="options">
             <div v-for="(name, index) in this.options">
-                <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index}"
-                 @click="selectParagraph(index)">
+                <p class="clickable-div" @click="addOption(index)">
                 {{ name }}
             </p>
             </div>
@@ -44,7 +49,9 @@ export default {
             wrongAnswer: null,
             flag: null,
             selectedParagraph: null,
+            selectedParagraphChosen: null,
             phrase: null,
+            optionsChosen: [],
             options: null,
             speaking: false,
             imageNotSpeaking: '../../audio/volumedown.png',
@@ -65,17 +72,10 @@ export default {
         fetchPhrase(){
         axios.get('http://127.0.0.1:5000/lev1/phrases',{params:{ex:"3"}})
         .then(response => {
-          console.log(response.data);
-          // do something with response.data
-         let dict = response.data;
-         this.phrase = dict['phrase']
-         this.options = Object.keys(dict)
-        .filter((key) => key!=='phrase')
-        .reduce((obj, key) => {
-            return Object.assign(obj, {
-            [key]: dict[key]
-            });
-        }, {});
+        // do something with response.data
+        this.options = Object.values(response.data)
+        this.phrase = response.data["phrase"]
+        this.options.pop(this.phrase)
         })
         .catch(error => {
           console.error(error);
@@ -83,6 +83,10 @@ export default {
         },
         //Check if the guessed phrase is correct
         get_result(){
+            this.optionsChosen.forEach((value) => {
+                this.guessedPhrase += value + " "
+            });
+            console.log(this.guessedPhrase)
             axios.post('http://127.0.0.1:5000/lev1/ex3/answer', {phrase:this.guessedPhrase})
             .then(response => {
                 console.log(response.data)
@@ -100,13 +104,14 @@ export default {
             });
             setTimeout(function(){router.push({name:"result1", params: this.flag})}, 1000)
         },
-        selectParagraph(index) {
-        this.selectedParagraph = this.selectedParagraph === index ? null : index;
-        this.chooseOption(index);
+        addOption(index) {
+            let word = this.options[index]
+            this.optionsChosen.push(word)
+            this.options.splice(index,1);
         },
-        chooseOption(word){
-            this.guessedPhrase+=this.options[word]+" ";
-            delete this.options[word];
+        removeOption(index){
+            this.options.push(this.optionsChosen[index])
+            this.optionsChosen.splice(index,1);
         },
         goBack(){
         router.go(-1);
