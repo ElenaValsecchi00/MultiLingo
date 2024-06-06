@@ -93,15 +93,15 @@ export default {
                 console.log(response.data)
                 this.disabledConfirm = false;
                 this.message = response.data["data"];
-                this.errors = response.data["errors"]["message"]
-                this.numerrors = response.data["numerrors"]
+                this.errors = response.data["errors"];
+                this.numerrors = response.data["numerrors"];
             })
             .catch(error => {
                 console.log(error)
             });
         },
         goOn(){
-            router.push({name:"lev2_2", params: this.flag})
+            router.replace({name:"lev2_2", params: this.flag})
         }
     }
     };
@@ -178,8 +178,8 @@ body{
     margin:0cap;
 }
 .text{
-    width: auto;
-    height: 60px;
+    width: 320px;
+    height: auto;
     background-color: white;
     border-radius: 10px;
     font-size: 20px;

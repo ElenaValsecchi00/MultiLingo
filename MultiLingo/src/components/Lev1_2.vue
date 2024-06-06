@@ -119,7 +119,7 @@ export default {
         },
         goOn(){
             this.checkAnswer()
-            setTimeout(function(){router.push({name:"lev1_3", params: this.flag})}, 1000)
+            setTimeout(function(){router.replace({name:"lev1_3", params: this.flag})}, 1000)
         }
     }
     };

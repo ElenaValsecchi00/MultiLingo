@@ -108,7 +108,7 @@ export default {
         },
         goOn(){
             //***where*** 
-            setTimeout(function(){router.push({name:"result1", params: this.flag})}, 1000)
+            setTimeout(function(){router.replace({name:"result1", params: this.flag})}, 1000)
         }
     }
     };
@@ -120,8 +120,8 @@ body{
 }
 
 .text{
-    width: auto;
-    height: 100px;
+    width: 320;
+    height: auto;
     background-color: white;
     border-radius: 10px;
     margin: 160px 10px 2px 10px;

@@ -103,7 +103,7 @@ export default {
                 console.error(error);
             });
             
-            setTimeout(function(){router.replace({name:"home"}).then(router.push({name:"result1", params: this.flag}))}, 1000)
+            setTimeout(function(){router.replace({name:"result1", params: this.flag})}, 1000)
         },
         addOption(index) {
             let word = this.options[index]

@@ -174,7 +174,6 @@ def get_phrase():
 #record audio
 def record_audio():
     global audio
-
     audio = record()
     return jsonify("andato a buon fine")
 
@@ -183,6 +182,7 @@ def record_audio():
 def textify_audio():
     text_of_speech = speech_to_text(audio)
     options = text_of_speech.split()
+    global results1_1
     try:
         #check if word has been pronounced correctly
         if is_sentence_correct(text_of_speech):
@@ -200,6 +200,7 @@ def textify_audio():
 #record audio
 def check():
     data = request.get_json()
+    global results1_1, results1_2
     #check if clicked option is correct
     if(data["data"] == right_answer):
         ex = request.args.get('ex','')
@@ -217,6 +218,7 @@ def check():
 #see if expected stentence is matched
 def get_result():
     submitted_phrase = request.get_json()['phrase']
+    global results1_3
     if submitted_phrase.strip()==expected_sen:
         results1_3 = 1
         return jsonify(True)
@@ -291,14 +293,9 @@ def handle_input():
 def get_pronounced_phrase():
     text_of_speech = speech_to_text(audio)
     matches = tool.check(text_of_speech)
-    errors = []
+    errors = ""
     for match in matches:
-        errors.append({
-            'message': match.message,
-            'offset': match.offset,
-            'length': match.errorLength,
-            'replacements': match.replacements
-        })
+       errors+=match.message
     response = {"data": text_of_speech, "numerrors": len(matches), "errors": errors}
     return response
 
