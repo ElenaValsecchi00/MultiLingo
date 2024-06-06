@@ -102,7 +102,8 @@ export default {
             .catch(error => {
                 console.error(error);
             });
-            setTimeout(function(){router.push({name:"result1", params: this.flag})}, 1000)
+            
+            setTimeout(function(){router.replace({name:"home"}).then(router.push({name:"result1", params: this.flag}))}, 1000)
         },
         addOption(index) {
             let word = this.options[index]
@@ -222,8 +223,9 @@ body{
 
 }
 .text{
-    width: auto;
-    height: 100px;
+    width: 330px;
+    height: auto;
+    margin-left: 15px;
     background-color: white;
     border-radius: 10px;
     font-size: 20px;
