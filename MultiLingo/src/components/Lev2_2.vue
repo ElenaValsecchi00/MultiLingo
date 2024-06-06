@@ -20,7 +20,7 @@
             :src="listening ? imageListening : imageNotListening">
             </button>
             <p class="text" >{{this.message}}</p>
-            <p>Errors: {{this.numerrors}}, {{this.errors}}</p>
+            <p class="text" >Errors: {{this.numerrors}}, {{this.errors}}</p>
         </div>
         
         <!--When pressed first time starts recording, when pressed second time stops-->
