@@ -96,7 +96,7 @@ export default {
                 console.log(response.data)
                 this.disabledConfirm = false;
                 this.message = response.data["data"];
-                this.errors = response.data["errors"]["message"]
+                this.errors = response.data["errors"];
                 this.numerrors = response.data["numerrors"]
             })
             .catch(error => {
