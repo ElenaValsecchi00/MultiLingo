@@ -19,8 +19,8 @@
             <img  class="audioImg"  
             :src="listening ? imageListening : imageNotListening">
             </button>
-            <p class="text" >{{this.message}}</p>
-            <p class="text" >Errors: {{this.numerrors}}, {{this.errors}}</p>
+            <p class="text sentence" >{{this.message}}</p>
+            <p class="text errors" >Errors: {{this.numerrors}}, {{this.errors}}</p>
         </div>
         
         <!--When pressed first time starts recording, when pressed second time stops-->
@@ -124,10 +124,19 @@ body{
     height: auto;
     background-color: white;
     border-radius: 10px;
-    margin: 160px 10px 2px 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 2px;
     font-size: 20px;
-    padding: 20px;
-   
+    padding:20px;
+}
+
+.text.sentence{
+    margin-top:160px;
+
+}
+.text.errors{
+    margin-top:50px;
 }
 
 .buttonConferma {

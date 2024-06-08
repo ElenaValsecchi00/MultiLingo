@@ -11,7 +11,7 @@
             </div>      
         </header>
         
-        <p>{{ $t("assignment.header_1_3") }}</p>
+        <p>{{ $t("assignment.header_03") }}</p>
         <div class="scrollable" ref="scroll"> 
             <h3 class="text">{{ $t("assignment.header_3") }}</h3>
             <div v-for="(name, index) in this.conversation">

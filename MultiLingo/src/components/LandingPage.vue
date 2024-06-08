@@ -38,7 +38,8 @@ export default {
         listen_in_back(){
         axios.post('http://127.0.0.1:5000/background')
         .then(response => { 
-            console.log(response)
+          console.log(response.data["url"]);
+          router.replace({name:response.data["url"]});
         })
         .catch(error => {
             console.log(error)

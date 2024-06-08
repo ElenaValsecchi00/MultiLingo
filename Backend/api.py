@@ -1,6 +1,6 @@
 # app.py
 
-from flask import Flask, request
+from flask import Flask, request, redirect
 from flask import  jsonify
 from flask_cors import CORS
 
@@ -26,11 +26,18 @@ language = ""
 audio = None
 expected_sen = ""
 right_answer = ""
-stop_in_back = None
-
+def dummy(wait_for_stop):
+    print("")
+class Back():
+    def __init__(self):
+        self.back_active = False
+stop_in_back = dummy
+back = Back()
+page_to_redirect = ""
 results1_1 = 0
 results1_2 = 0
 results1_3 = 0
+
 #key:ex, value = list of tuples (phrase, word position of guessed word) for ex 1, for ex 3 (phrase,None)
 lev1_phrases = {"1": [("My mother is a good hiker", 2),("Elena had chicken pox when she was six",1), ("See this cat, it is striped",1),
                        ("My mother is one amongst the english teachers of the school",3)],
@@ -95,12 +102,14 @@ def choose_and_translate(phrase_list,options_list, ex):
 
 #function that records an audio file 
 def record():
+    global stop_in_back
     mic = sr.Microphone()
     rec = sr.Recognizer()
     with mic as source:
         rec.adjust_for_ambient_noise(source)
         global audio
         audio = rec.listen(source, timeout=3000, phrase_time_limit=20000)
+    stop_in_back = rec.listen_in_background(mic, callback)
     return audio
 
 #function that transcribes the audio file
@@ -128,29 +137,37 @@ def callback(recognizer, audio):  # this is called from the background thread
     try:
         speech_as_text = recognizer.recognize_google(audio, language = language)
         print(speech_as_text)
-
-        # Look for your "Ok Google" keyword in speech_as_text
-        if translator.translate("confirm", dest=language).text in speech_as_text.lower():
-            recognize_main()
+        confirm_trigger = "conferma" if language=="it" else "confirma" if language=="es" else "confirm" if language=="en" else "confirme"
+        back_trigger = "indietro" if language=="it" else "atras" if language=="es" else "back" if language=="en" else "derrière"
+          
+        # Look for your "trigger" keyword in speech_as_text
+        if confirm_trigger in speech_as_text.lower():
+            confirm()
+            #go to next page
+        elif back_trigger in speech_as_text.lower():
+            print("sto a tornà")
     except sr.UnknownValueError:
         print("Oops! Didn't catch that")
 
 
-def recognize_main():
-    print("Recognizing Main...")
+def confirm():
+    global page_to_redirect, back
+    page_to_redirect="home"
     stop_in_back(wait_for_stop=False)
-    while True: time.sleep(0.1) 
+    back.back_active=False
     # interpret the user's words however you normally interpret them
 
 
 @app.route("/background", methods=["POST"])
 #start to listen in background
 def start_recognizer():
-    global stop_in_back
+    global stop_in_back, back
+    stop_in_back(wait_for_stop=False)
+    back.back_active = True
     stop_in_back = rec.listen_in_background(mic, callback)
-    print("cocorita")
-    time.sleep(1.2) # we're still listening even though the main thread is blocked
-    
+    while back.back_active:
+        time.sleep(1.0) # we're still listening even though the main thread is blocked
+    return jsonify({"url":page_to_redirect})
 
 @app.route("/lev2/getLanguage", methods=["POST"])
 def get_language():
@@ -174,6 +191,7 @@ def get_phrase():
 #record audio
 def record_audio():
     global audio
+    stop_in_back(wait_for_stop=False)
     audio = record()
     return jsonify("andato a buon fine")
 
@@ -252,7 +270,7 @@ nlp = spacy.load("en_core_web_sm")
 answers = {
     "tool": ["hammer", "shovel", "scissor"],
     "clothe": ["shirt", "trouser", "dress"],
-    "fruit": ["apple", "banana", "passion fruit"]
+    "fruit": ["apple", "banana", "pear"]
 }
 def reveal_list(doc):
     for token in doc:
@@ -266,7 +284,9 @@ def reveal_list(doc):
 def handle_input():
     phrase = request.get_json()
     phrase = phrase["data"]
-    if phrase.lower() in ["quit", "bye", "end"]:
+    if phrase==None:
+        phrase=""
+    if phrase.lower() in ["bye", "goodbye"]:
         return jsonify("Goodbye!")
     else:
         doc = nlp(translator.translate(phrase.lower(),src=language, dest="en").text)
@@ -274,14 +294,10 @@ def handle_input():
         answer = ""
         if any(token.lemma_ in ["tool", "clothe", "fruit"] for token in doc):
             answer = reveal_list(doc)
-        elif any(token.lemma_ in answers["tool"] or token.lemma_ in answers["clothe"] for token in doc):
-            answer = "Would you like to have it now or delivered?"
-        elif any(token.lemma_ in ["here", "now"] or token.lemma_ in answers["fruit"] for token in doc):
-            answer = "Would you like to pay cash or by card?" 
-        elif any(token.lemma_ in ["deliver", "home"] for token in doc):
-            answer = "Can I get your address?" 
-        elif any(token.lemma_ in ["address", "street", "avenue", "live"]  for token in doc):
-            answer = "Ok, you can pay once delivered. Thanks for the purchase. Have a nice day!"
+        elif any(token.lemma_ in answers["tool"] or token.lemma_ in answers["clothe"] or token.lemma_ in answers["fruit"] for token in doc):
+            answer = "How many pieces do you need?"
+        elif any(token.lemma_ in [str(i) for i in range(1000)]  for token in doc):
+            answer = "Are you sure? Would you like to pay cash or by card?" 
         elif any(token.lemma_ in ["cash", "card"] for token in doc):
             answer = "Ok, thanks for the purchase. Have a nice day!"
         else: 
@@ -292,7 +308,7 @@ def handle_input():
 #get the tedxt of the message in level 3
 def get_pronounced_phrase():
     text_of_speech = speech_to_text(audio)
-    matches = tool.check(text_of_speech)
+    matches = tool.check(text_of_speech)[1:]
     errors = ""
     for match in matches:
        errors+=match.message
