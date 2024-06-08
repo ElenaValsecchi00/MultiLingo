@@ -153,6 +153,7 @@ def callback(recognizer, audio):  # this is called from the background thread
 def confirm():
     global page_to_redirect, back
     page_to_redirect="home"
+    #stops the listenng and sets back.back_active to false
     stop_in_back(wait_for_stop=False)
     back.back_active=False
     # interpret the user's words however you normally interpret them
@@ -167,6 +168,7 @@ def start_recognizer():
     stop_in_back = rec.listen_in_background(mic, callback)
     while back.back_active:
         time.sleep(1.0) # we're still listening even though the main thread is blocked
+    #it returns only when back_active is set to false
     return jsonify({"url":page_to_redirect})
 
 @app.route("/lev2/getLanguage", methods=["POST"])
