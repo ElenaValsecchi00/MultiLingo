@@ -9,6 +9,7 @@ import Lev1_3Page from '../components/Lev1_3.vue'
 import Lev3Page from '../components/Lev3.vue'
 import Lev2Choice from '../components/Lev2Choice.vue'
 import Result1 from '../components/Result1.vue'
+import Result2 from '../components/Result2.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -62,6 +63,11 @@ const router = createRouter({
       path: '/:language/result1',
       name: 'result1',
       component: Result1
+    },
+    {
+      path: '/:language/result2',
+      name: 'result2',
+      component: Result2
     },
   ]
 })
