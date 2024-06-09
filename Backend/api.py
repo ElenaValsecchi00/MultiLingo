@@ -33,7 +33,7 @@ class Back():
         self.back_active = False
 stop_in_back = dummy
 back = Back()
-page_to_redirect = ""
+trigger_word = ""
 results1_1 = 0
 results1_2 = 0
 results1_3 = 0
@@ -142,17 +142,17 @@ def callback(recognizer, audio):  # this is called from the background thread
           
         # Look for your "trigger" keyword in speech_as_text
         if confirm_trigger in speech_as_text.lower():
-            confirm()
+            trigger("confirm")
             #go to next page
         elif back_trigger in speech_as_text.lower():
-            print("sto a tornà")
+            trigger("back")
     except sr.UnknownValueError:
         print("Oops! Didn't catch that")
 
 
-def confirm():
-    global page_to_redirect, back
-    page_to_redirect="home"
+def trigger(trigger):
+    global trigger_word, back
+    trigger_word=trigger
     #stops the listenng and sets back.back_active to false
     stop_in_back(wait_for_stop=False)
     back.back_active=False
@@ -163,13 +163,13 @@ def confirm():
 #start to listen in background
 def start_recognizer():
     global stop_in_back, back
-    stop_in_back(wait_for_stop=False)
+    stop_in_back(wait_for_stop=False)#every time the function gets called, it restarts the listening in bakcground process
     back.back_active = True
     stop_in_back = rec.listen_in_background(mic, callback)
     while back.back_active:
         time.sleep(1.0) # we're still listening even though the main thread is blocked
     #it returns only when back_active is set to false
-    return jsonify({"url":page_to_redirect})
+    return jsonify({"url":trigger_word})
 
 @app.route("/lev2/getLanguage", methods=["POST"])
 def get_language():

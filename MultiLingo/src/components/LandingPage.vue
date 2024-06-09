@@ -16,6 +16,7 @@
 import i18n from '@/i18n';
 import router from '../router';
 import axios from 'axios';
+import { useRoute } from 'vue-router';
 
 export default {
   
@@ -36,10 +37,32 @@ export default {
         });
         },
         listen_in_back(){
-        axios.post('http://127.0.0.1:5000/background')
-        .then(response => { 
-          console.log(response.data["url"]);
-          router.replace({name:response.data["url"]});
+          axios.post('http://127.0.0.1:5000/background')
+          .then(response => {
+            try{
+              if (response.data["url"]=="back")
+              {
+                console.log("back");
+                router.go(-1);
+              }
+              else if(response.data["url"]=="confirm"){
+                var routName =router.currentRoute.value.name
+                for(let i=0; i<router.getRoutes().length; i++)
+                {
+                  var r = router.getRoutes()[i];
+                  if(r.name==routName){
+                    var goOn = r.components.default.methods.goOn;
+                    goOn();
+                  }
+                
+                }
+              }
+              this.listen_in_back()
+          }
+          catch(error){
+            console.log(error)
+            this.listen_in_back()
+          }
         })
         .catch(error => {
             console.log(error)

@@ -16,7 +16,7 @@
             <p>E-2: {{ this.result1_2}} /1</p>
             <p>E-3: {{ this.result1_3}} /1</p>
         </div>
-        <button class="buttonConferma" @click="goBack()">{{ $t("assignment.confirm") }}</button>
+        <button class="buttonConferma" @click="goOn()">{{ $t("assignment.confirm") }}</button>
     
     </body>
 </template>
@@ -55,6 +55,9 @@ export default {
             this.result1_2 = response.data["2"]
             this.result1_3 = response.data["3"]
         })
+        },
+        goOn(){
+            router.go(-1);
         }
     }
     };

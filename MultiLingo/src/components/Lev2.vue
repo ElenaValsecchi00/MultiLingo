@@ -101,7 +101,7 @@ export default {
             });
         },
         goOn(){
-            router.replace({name:"lev2_2", params: this.flag})
+            setTimeout(function(){router.replace({name:"lev2_2", params: this.flag})}, 1000)
         }
     }
     };

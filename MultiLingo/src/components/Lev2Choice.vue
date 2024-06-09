@@ -24,6 +24,8 @@
       <a href="#" v-on:click="sendLanguage(language)" id="submit">SUBMIT</a>
     </form>
     <RouterView />
+
+    <button class="buttonConferma" @click="goOn()">{{ $t("assignment.confirm") }}</button>
   </body>
 
   </template>
@@ -51,7 +53,6 @@
           axios.post('http://127.0.0.1:5000/lev2/getLanguage', {startingLanguage:language})
           .then(response => { 
               console.log(response)
-              router.replace({name:"lev2", params: this.flag})
           })
           .catch(error => {
               console.log(error)
@@ -59,6 +60,9 @@
           },
         goBack(){
             router.go(-1);
+        },
+        goOn(){
+          setTimeout(function(){router.replace({name:"lev2", params: this.flag})}, 1000)
         }
       }
       };
@@ -106,6 +110,21 @@ button{
     outline: none;
 }
 
+.buttonConferma {
+    position:absolute;
+    width: 50%;
+    height: 40px;
+    text-align: center;
+    left: 0; 
+    right: 0; 
+    bottom:40px;
+    margin-left: auto; 
+    margin-right: auto; 
+    background: #C3E986;
+    border-radius: 10px;
+    border-color: transparent;
+    cursor: pointer;
+}
 .languageinput{
   border-radius: 10px;
   position: relative;

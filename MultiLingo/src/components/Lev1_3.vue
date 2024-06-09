@@ -102,8 +102,8 @@ export default {
             .catch(error => {
                 console.error(error);
             });
+            this.goOn();
             
-            setTimeout(function(){router.replace({name:"result1", params: this.flag})}, 1000)
         },
         addOption(index) {
             let word = this.options[index]
@@ -128,7 +128,10 @@ export default {
             .catch(error => {
                 console.error(error);
             });
-            }
+            },
+        goOn(){
+            setTimeout(function(){router.replace({name:"result1", params: this.flag})}, 1000)
+        }
         }
     };
 

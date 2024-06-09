@@ -55,7 +55,6 @@ export default {
             disabledConfirm: true
         };
     },
-
     created(){
         this.flag = this.$route.params.language;
         this.src = '../../flags/' + this.flag + ".png";
@@ -128,13 +127,13 @@ export default {
             .then(response => { 
                 console.log(response.data)
                 this.disabledConfirm = false
+                this.checkAnswer()
             })
             .catch(error => {
                 console.log(error)
             });
         },
         goOn(){
-            this.checkAnswer()
             setTimeout(function(){router.replace({name:"lev1_2", params: this.flag})}, 1000)
         }
     }

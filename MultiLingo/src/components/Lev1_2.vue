@@ -84,7 +84,7 @@ export default {
         selectParagraph(index) {
         this.selectedParagraph = this.selectedParagraph === index ? null : index;
         this.disabledConfirm = this.selectedParagraph === null? true : false;
-
+        this.checkAnswer()
         },
         checkAnswer(){
             const answer = this.options[this.selectedParagraph]
@@ -109,6 +109,7 @@ export default {
             .then(response => {
                 console.log(response.data)
                 this.listening = false;
+                
             })
             .catch(error => {
                 console.error(error);
@@ -118,7 +119,6 @@ export default {
         router.go(-1);
         },
         goOn(){
-            this.checkAnswer()
             setTimeout(function(){router.replace({name:"lev1_3", params: this.flag})}, 1000)
         }
     }
