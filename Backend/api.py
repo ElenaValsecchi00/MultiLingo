@@ -263,6 +263,7 @@ def check():
     #check if clicked option is correct
     if(data["data"] == right_answer):
         ex = request.args.get('ex','')
+        print(ex)
         if ex == "1":
             results1_1 += 0.5
         else:
@@ -302,7 +303,7 @@ def pron_phrase_2():
     index = random.randrange(0,len(lev2_phrases["1"]))
     phrase = lev2_phrases["1"][index] 
     global expected_sen
-    expected_sen = phrase
+    expected_sen = translator.translate(phrase,src="en", dest=language)
     phrase = translator.translate(phrase,src="en", dest=startingLanguage).text
     engine.say(phrase)
     engine.runAndWait()
@@ -393,7 +394,7 @@ def get_phrase_2():
     index = random.randrange(0,len(lev2_phrases[ex]))
     phrase = lev2_phrases[ex][index] 
     global expected_sen
-    expected_sen = phrase
+    expected_sen = translator.translate(phrase,src="en", dest=language)
     translation_phrase = translator.translate(phrase,src="en", dest=startingLanguage)
     print(startingLanguage, language)
     response = jsonify(translation_phrase.text)
@@ -403,17 +404,20 @@ def get_phrase_2():
 @app.route("/lev1/results", methods=["GET"])
 def lev1Results():
     results = {}
-    ex = request.args.get('ex','')
-    if(ex=="1"):
-        results["1"] = results1_1
-        results["2"] = results1_2
-        results["3"] = results1_3
-    elif(ex=="2"):
-        results["1"] = results2_1
-        results["2"] = results2_2
+    results["1"] = results1_1
+    results["2"] = results1_2
+    results["3"] = results1_3
     response = jsonify(results)
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response 
 
+@app.route("/lev1/results", methods=["GET"])
+def lev2Results():
+    results = {}
+    results["1"] = results2_1
+    results["2"] = results2_2
+    response = jsonify(results)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response 
 if __name__ == '__main__':
     app.run()

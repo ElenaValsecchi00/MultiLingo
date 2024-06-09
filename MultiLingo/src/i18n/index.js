@@ -8,7 +8,7 @@ export default createI18n({
     en: {
       home: {
         header: "Welcome!",
-        choose_flag: "Choose the language you prefer and start navigating the app using the words 'Confirm' and 'Back' ",
+        choose_flag: "Choose the language you prefer and start navigating through the app using the words 'Confirm' and 'Back' ",
         choose_starting_flag: "Choose your first language"
       },
       language: {
@@ -31,7 +31,7 @@ export default createI18n({
     it: {
       home: {
         header: "Benvenuto/a!",
-        choose_flag: "Scegli la lingua che preferisci e inizia a navigare l'applicazione utilizzando le parole 'Conferma' e 'Indietro' ",
+        choose_flag: "Scegli la lingua che preferisci e inizia a navigare nell'applicazione utilizzando le parole 'Conferma' e 'Indietro' ",
         choose_starting_flag: "Scegli la lingua di partenza"
       },
         language: {

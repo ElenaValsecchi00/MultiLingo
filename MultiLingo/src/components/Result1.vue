@@ -48,7 +48,7 @@ export default {
         router.go(-1);
         },
         getResults(){
-            axios.get('http://127.0.0.1:5000/lev1/results', {ex:"1"})
+            axios.get('http://127.0.0.1:5000/lev1/results')
         .then(response => {
             console.log(response.data)
             this.result1_1 = response.data["1"]
