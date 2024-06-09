@@ -11,10 +11,9 @@
             </div>
         </header>
         <div>
-            <p>{{ $t("assignment.header_result_1") }}</p>
-            <p>E-1: {{ this.result1_1}} /1</p>
-            <p>E-2: {{ this.result1_2}} /1</p>
-            <p>E-3: {{ this.result1_3}} /1</p>
+            <p>{{ $t("assignment.header_result_2") }}</p>
+            <p>E-1: {{ this.result2_1}} /1</p>
+            <p>E-2: {{ this.result2_2}} /1</p>
         </div>
         <button class="buttonConferma" @click="goOn()">{{ $t("assignment.confirm") }}</button>
     
@@ -28,9 +27,8 @@ export default {
     data() {
         return {
             flag: null,
-            result1_1: '',
-            result1_2: '',
-            result1_3: ''
+            result2_1: '',
+            result2_2: '',
         };
     },
 
@@ -48,12 +46,11 @@ export default {
         router.go(-1);
         },
         getResults(){
-            axios.get('http://127.0.0.1:5000/lev1/results', {ex:"1"})
+            axios.get('http://127.0.0.1:5000/lev1/results', {ex: "2"})
         .then(response => {
             console.log(response.data)
-            this.result1_1 = response.data["1"]
-            this.result1_2 = response.data["2"]
-            this.result1_3 = response.data["3"]
+            this.result2_1 = response.data["1"]
+            this.result2_2 = response.data["2"]
         })
         },
         goOn(){

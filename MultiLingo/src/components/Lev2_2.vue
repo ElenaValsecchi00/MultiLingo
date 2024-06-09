@@ -20,7 +20,11 @@
             :src="listening ? imageListening : imageNotListening">
             </button>
             <p class="text sentence" >{{this.message}}</p>
-            <p class="text errors" >Errors: {{this.numerrors}}, {{this.errors}}</p>
+            <p class="text errors" >
+                Errors number: {{this.numerrors}} 
+                Errors description:{{this.errors}}
+                Expected Sentence: {{ this.expectedSentence }}
+            </p>
         </div>
         
         <!--When pressed first time starts recording, when pressed second time stops-->
@@ -52,7 +56,8 @@ export default {
             disabledConfirm: true,
             score: 0,
             errors: null,
-            numerrors: 0
+            numerrors: 0,
+            expectedSentence: ""
         };
     },
 
@@ -71,7 +76,6 @@ export default {
             .then(response => {
                 console.log(response.data)
                 this.listening = false;
-                
             })
             .catch(error => {
                 console.error(error);
@@ -97,6 +101,7 @@ export default {
                 this.message = response.data["data"];
                 this.errors = response.data["errors"];
                 this.numerrors = response.data["numerrors"]
+                this.expectedSentence = response.data["expected"]
             })
             .catch(error => {
                 console.log(error)
@@ -107,7 +112,7 @@ export default {
         },
         goOn(){
             //***where*** 
-            setTimeout(function(){router.replace({name:"result1", params: this.flag})}, 1000)
+            setTimeout(function(){router.replace({name:"result2", params: this.flag })}, 1000)
         }
     }
     };
@@ -120,7 +125,7 @@ body{
 
 .text{
     width: 320;
-    height: auto;
+    height: 50px;
     background-color: white;
     border-radius: 10px;
     margin-left: 10px;
@@ -135,7 +140,8 @@ body{
 
 }
 .text.errors{
-    margin-top:50px;
+    margin-top:20px;
+    height: auto;
 }
 
 .buttonConferma {

@@ -14,9 +14,13 @@
         <div>
             <p>{{ $t("assignment.header_2_1") }}</p>
             <p>{{ this.phrase }}</p>
-            <p class="text" >{{this.message}}</p>
+            <p class="text sentence" >{{this.message}}</p>
         </div>
-        <p class="text" >Errors: {{this.numerrors}}, {{this.errors}}</p>
+        <p class="text errors" >
+            Errors number: {{this.numerrors}} 
+            Errors description:{{this.errors}}
+            Expected Sentence: {{ this.expectedSentence }}
+        </p>
         
         
         <!--When pressed first time starts recording, when pressed second time stops-->
@@ -49,7 +53,8 @@ export default {
             disabledConfirm: true,
             score: 0,
             errors: "",
-            numerrors: 0
+            numerrors: 0,
+            expectedSentence: ""
         };
     },
 
@@ -95,6 +100,7 @@ export default {
                 this.message = response.data["data"];
                 this.errors = response.data["errors"];
                 this.numerrors = response.data["numerrors"];
+                this.expectedSentence = response.data["expected"]
             })
             .catch(error => {
                 console.log(error)
@@ -179,12 +185,20 @@ body{
 }
 .text{
     width: 320px;
-    height: auto;
+    height: 50px;
     background-color: white;
     border-radius: 10px;
+    margin-left: 20px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    padding: 5px;
+}
+.text.sentence{
     font-size: 20px;
-    margin: 20px;
-    padding: 10px;
+}
+.text.errors{
+    height: auto;
+    font-size: 20px;
 }
 .flag{
     position:absolute;

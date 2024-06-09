@@ -22,6 +22,7 @@ export default createI18n({
         header_result_1: "Results Level 1",
         header_2_1: "Translate the phrase and then read it",
         header_2_2: "Listen the phrase and then translate it",
+        header_result_2:"Results Level 2" ,
         header_3: "Welcome to Megastore! Are you looking for fruit, tools or clothes?",
         header_03: "Answer the questions",
         confirm: "Confirm"
@@ -44,6 +45,7 @@ export default createI18n({
           header_result_1: "Risultati Livello 1",
           header_2_1: "Traduci la frase e leggila",
           header_2_2: "Ascolta la frase e traducila",
+          header_result_2:"Risultati Livello 2" ,
           header_03: "Rispondi alle domande",
           header_3: "Benvenuto in Megastore! Stai cercando frutta, attrezzi o vestiti?",
           confirm: "Conferma"
@@ -66,6 +68,7 @@ export default createI18n({
           header_result_1: "Resultados Nivel 1",
           header_2_1: "Traduce la frase y léela",
           header_2_2: "Escucha la frase y traduzla",
+          header_result_2:"Resultados Nivel 2" ,
           header_03: "Responde a las preguntas",
           header_3: "¡Bienvenidos a Megatienda! ¿Buscas fruta, herramientas o ropa?",
           confirm: "Confirma"
@@ -88,6 +91,7 @@ export default createI18n({
           header_result_1: "Résultats Niveau 1",
           header_2_1: "Traduis la phrase et lis-la",
           header_2_2: "Écoute la phrase et complète-la",
+          header_result_1: "Résultats Niveau 2",
           header_03: "Répondez aux questions",
           header_3: "Bienvenue sur Mégastore! Vous cherchez des fruits, des outils ou des vêtements?",
           confirm: "Confirme"

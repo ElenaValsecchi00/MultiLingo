@@ -53,6 +53,7 @@
           axios.post('http://127.0.0.1:5000/lev2/getLanguage', {startingLanguage:language})
           .then(response => { 
               console.log(response)
+              //router.replace({name:"lev2", params: this.flag})
           })
           .catch(error => {
               console.log(error)

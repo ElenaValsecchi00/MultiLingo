@@ -14,6 +14,10 @@ from Levenshtein import distance
 import spacy
 import time
 import language_tool_python
+import math
+import re
+from collections import Counter
+
 
 tool = language_tool_python.LanguageTool('en')
 keywords = [("confirm", 1), ("back", 1), ]
@@ -37,7 +41,8 @@ trigger_word = ""
 results1_1 = 0
 results1_2 = 0
 results1_3 = 0
-
+results2_1 = 0
+results2_2 = 0
 #key:ex, value = list of tuples (phrase, word position of guessed word) for ex 1, for ex 3 (phrase,None)
 lev1_phrases = {"1": [("My mother is a good hiker", 2),("Elena had chicken pox when she was six",1), ("See this cat, it is striped",1),
                        ("My mother is one amongst the english teachers of the school",3)],
@@ -62,6 +67,40 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def is_sentence_correct(actual_sen):
     dist = distance(expected_sen,actual_sen)
     return dist < 5
+
+
+##################################################################################################################################
+
+
+WORD = re.compile(r"\w+")
+
+def get_cosine(vec1, vec2):
+    intersection = set(vec1.keys()) & set(vec2.keys())
+    numerator = sum([vec1[x] * vec2[x] for x in intersection])
+
+    sum1 = sum([vec1[x] ** 2 for x in list(vec1.keys())])
+    sum2 = sum([vec2[x] ** 2 for x in list(vec2.keys())])
+    denominator = math.sqrt(sum1) * math.sqrt(sum2)
+
+    if not denominator:
+        return 0.0
+    else:
+        return float(numerator) / denominator
+
+
+def text_to_vector(text):
+    words = WORD.findall(text)
+    return Counter(words)
+
+
+
+
+##################################################################################################################################
+
+
+
+
+
 
 #split, substitute element with ... and recompose
 def substitute_with_blank(translation_phrase, translation_options, right_option):
@@ -262,6 +301,8 @@ def pron_phrase_2():
     engine.setProperty('rate', 150)
     index = random.randrange(0,len(lev2_phrases["1"]))
     phrase = lev2_phrases["1"][index] 
+    global expected_sen
+    expected_sen = phrase
     phrase = translator.translate(phrase,src="en", dest=startingLanguage).text
     engine.say(phrase)
     engine.runAndWait()
@@ -310,11 +351,32 @@ def handle_input():
 #get the tedxt of the message in level 3
 def get_pronounced_phrase():
     text_of_speech = speech_to_text(audio)
+    ex = request.args.get('ex','')
+    global results2_1
+    global results2_2
+    print(expected_sen, text_of_speech)
+
+    ##########check score###########
+
+    vector1 = text_to_vector(expected_sen)
+    vector2 = text_to_vector(text_of_speech)
+
+    cosine = get_cosine(vector1, vector2)
+
+    print("Cosine:", cosine)
+    if cosine > 0.65:
+        if(ex == "1"):
+            results2_1 = 1
+        else:
+            results2_2 = 1
+
+    ##########check gram. errors###########
+
     matches = tool.check(text_of_speech)[1:]
     errors = ""
     for match in matches:
        errors+=match.message
-    response = {"data": text_of_speech, "numerrors": len(matches), "errors": errors}
+    response = {"data": text_of_speech, "numerrors": len(matches), "errors": errors, "expected": expected_sen}
     return response
 
 @app.route("/lev3/record", methods=["POST"])
@@ -330,6 +392,8 @@ def get_phrase_2():
     ex = request.args.get('ex','')
     index = random.randrange(0,len(lev2_phrases[ex]))
     phrase = lev2_phrases[ex][index] 
+    global expected_sen
+    expected_sen = phrase
     translation_phrase = translator.translate(phrase,src="en", dest=startingLanguage)
     print(startingLanguage, language)
     response = jsonify(translation_phrase.text)
@@ -339,9 +403,14 @@ def get_phrase_2():
 @app.route("/lev1/results", methods=["GET"])
 def lev1Results():
     results = {}
-    results["1"] = results1_1
-    results["2"] = results1_2
-    results["3"] = results1_3
+    ex = request.args.get('ex','')
+    if(ex=="1"):
+        results["1"] = results1_1
+        results["2"] = results1_2
+        results["3"] = results1_3
+    elif(ex=="2"):
+        results["1"] = results2_1
+        results["2"] = results2_2
     response = jsonify(results)
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response 
