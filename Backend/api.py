@@ -303,7 +303,7 @@ def pron_phrase_2():
     index = random.randrange(0,len(lev2_phrases["1"]))
     phrase = lev2_phrases["1"][index] 
     global expected_sen
-    expected_sen = translator.translate(phrase,src="en", dest=language)
+    expected_sen = translator.translate(phrase,src="en", dest=language).text
     phrase = translator.translate(phrase,src="en", dest=startingLanguage).text
     engine.say(phrase)
     engine.runAndWait()
@@ -358,7 +358,7 @@ def get_pronounced_phrase():
     print(expected_sen, text_of_speech)
 
     ##########check score###########
-
+   
     vector1 = text_to_vector(expected_sen)
     vector2 = text_to_vector(text_of_speech)
 
@@ -394,7 +394,7 @@ def get_phrase_2():
     index = random.randrange(0,len(lev2_phrases[ex]))
     phrase = lev2_phrases[ex][index] 
     global expected_sen
-    expected_sen = translator.translate(phrase,src="en", dest=language)
+    expected_sen = translator.translate(phrase,src="en", dest=language).text
     translation_phrase = translator.translate(phrase,src="en", dest=startingLanguage)
     print(startingLanguage, language)
     response = jsonify(translation_phrase.text)
@@ -411,7 +411,7 @@ def lev1Results():
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response 
 
-@app.route("/lev1/results", methods=["GET"])
+@app.route("/lev2/results", methods=["GET"])
 def lev2Results():
     results = {}
     results["1"] = results2_1
