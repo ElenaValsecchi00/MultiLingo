@@ -45,13 +45,19 @@ export default{
     this.flag = this.$route.params.language;
     // Composizione della stringa utilizzando il parametro della route
     this.src = '../../flags/' + this.flag + ".png";
+    
   },
   methods: {
     goBack(){
         router.go(-1);
     },
     goEx(i){
-        router.push({name:"lev" + i, params: this.flag});
+        if(i === 2){
+            router.push({name:"lev" + i + "choice", params: this.flag});
+        }else{
+            router.push({name:"lev" + i, params: this.flag});
+        }
+        
     }
 }
 };

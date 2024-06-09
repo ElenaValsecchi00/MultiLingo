@@ -18,13 +18,18 @@
             </button>
         </div>
        
-        <div class="inputText">
-            <p class="text">{{guessedPhrase}}</p>
+        
+        <div class="options inputText text">
+            <div v-for="(name, index) in this.optionsChosen">
+                <p class="clickable-div" @click="removeOption(index)">
+                {{ name }}
+            </p>
+        </div>
+            <!--<p class="text" :class="{'wrongAnswer': wrongAnswer}">{{guessedPhrase}}</p>-->
         </div>
         <div class="options">
             <div v-for="(name, index) in this.options">
-                <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index }"
-                 @click="selectParagraph(index)">
+                <p class="clickable-div" @click="addOption(index)">
                 {{ name }}
             </p>
             </div>
@@ -41,9 +46,12 @@ import axios from "axios"
 export default {
     data() {
         return {
+            wrongAnswer: null,
             flag: null,
             selectedParagraph: null,
+            selectedParagraphChosen: null,
             phrase: null,
+            optionsChosen: [],
             options: null,
             speaking: false,
             imageNotSpeaking: '../../audio/volumedown.png',
@@ -62,19 +70,12 @@ export default {
     },
     methods: {  
         fetchPhrase(){
-        axios.get('http://127.0.0.1:/lev1/phrases',{params:{ex:"3"}})
+        axios.get('http://127.0.0.1:5000/lev1/phrases',{params:{ex:"3"}})
         .then(response => {
-          console.log(response.data);
-          // do something with response.data
-         let dict = response.data;
-         this.phrase = dict['phrase']
-         this.options = Object.keys(dict)
-        .filter((key) => key!=='phrase')
-        .reduce((obj, key) => {
-            return Object.assign(obj, {
-            [key]: dict[key]
-            });
-        }, {});
+        // do something with response.data
+        this.options = Object.values(response.data)
+        this.phrase = response.data["phrase"]
+        this.options.pop(this.phrase)
         })
         .catch(error => {
           console.error(error);
@@ -82,21 +83,36 @@ export default {
         },
         //Check if the guessed phrase is correct
         get_result(){
+            this.optionsChosen.forEach((value) => {
+                this.guessedPhrase += value + " "
+            });
+            console.log(this.guessedPhrase)
             axios.post('http://127.0.0.1:5000/lev1/ex3/answer', {phrase:this.guessedPhrase})
             .then(response => {
-            console.log(response.data);
+                console.log(response.data)
+                if(response.data){
+                    //the answer was correct
+                    this.wrongAnswer = false
+                }
+                else{
+                    //mistakes were made
+                    this.wrongAnswer = true
+                }
             })
             .catch(error => {
-            console.error(error);
+                console.error(error);
             });
+            this.goOn();
+            
         },
-        selectParagraph(index) {
-        this.selectedParagraph = this.selectedParagraph === index ? null : index;
-        this.chooseOption(index);
+        addOption(index) {
+            let word = this.options[index]
+            this.optionsChosen.push(word)
+            this.options.splice(index,1);
         },
-        chooseOption(word){
-            this.guessedPhrase+=this.options[word]+" ";
-            delete this.options[word];
+        removeOption(index){
+            this.options.push(this.optionsChosen[index])
+            this.optionsChosen.splice(index,1);
         },
         goBack(){
         router.go(-1);
@@ -112,9 +128,13 @@ export default {
             .catch(error => {
                 console.error(error);
             });
-            }
+            },
+        goOn(){
+            setTimeout(function(){router.replace({name:"result1", params: this.flag})}, 1000)
+        }
         }
     };
+
 </script>
 
 <style scoped>
@@ -197,16 +217,18 @@ body{
     margin-top: 1cap;
     margin-right: 1cap;
 }
-
+.wrongAnswer{
+    background-color: rgb(255, 0, 0);
+}
 .inputText{
     padding:20px;
     margin-top:15vh;
 
 }
-
 .text{
-    width: auto;
-    height: 100px;
+    width: 330px;
+    height: auto;
+    margin-left: 15px;
     background-color: white;
     border-radius: 10px;
     font-size: 20px;

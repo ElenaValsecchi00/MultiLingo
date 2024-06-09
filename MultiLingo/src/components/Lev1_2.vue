@@ -23,7 +23,7 @@
 
         <div class="options">
             <div v-for="(name, index) in this.options">
-                <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index }"
+                <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index, 'wrongAnswer': selectedParagraph === index & wrongAnswer }"
                  @click="selectParagraph(index)">
                 {{ name }}
             </p>
@@ -42,6 +42,7 @@ import axios from "axios"
 export default {
     data() {
         return {
+            wrongAnswer: false,
             flag: null,
             selectedParagraph: null,
             phrase: null,
@@ -49,8 +50,7 @@ export default {
             listening: false,
             imageNotListening: '../../audio/volumedown.png',
             imageListening: '../../audio/volumeup.png',
-            disabledConfirm: true,
-            score: 0
+            disabledConfirm: true
         };
     },
 
@@ -84,6 +84,24 @@ export default {
         selectParagraph(index) {
         this.selectedParagraph = this.selectedParagraph === index ? null : index;
         this.disabledConfirm = this.selectedParagraph === null? true : false;
+        this.checkAnswer()
+        },
+        checkAnswer(){
+            const answer = this.options[this.selectedParagraph]
+            axios.post('http://127.0.0.1:5000/lev1/ex1_2/check', {data: answer, ex: "2"})
+            .then(response => { 
+                console.log(response.data, answer)
+                if (response.data) {
+                    //if true the answer clicked was right
+                    this.wrongAnswer = false
+                }else{
+                    //false the answer clicked was wrong
+                    this.wrongAnswer = true
+                }
+            })
+            .catch(error => {
+                console.log(error)
+            });
         },
         startListening(){
             this.listening = this.listening === false? true : false;
@@ -91,6 +109,7 @@ export default {
             .then(response => {
                 console.log(response.data)
                 this.listening = false;
+                
             })
             .catch(error => {
                 console.error(error);
@@ -100,7 +119,7 @@ export default {
         router.go(-1);
         },
         goOn(){
-            router.push({name:"lev1_3", params: this.flag})
+            setTimeout(function(){router.replace({name:"lev1_3", params: this.flag})}, 1000)
         }
     }
     };
@@ -167,6 +186,9 @@ body{
     background-color: rgb(6, 148, 6);
     transform: scale(0.95);
     transition: transform 0.5s ease;
+}
+.wrongAnswer{
+    background-color: red;
 }
 
 .container{

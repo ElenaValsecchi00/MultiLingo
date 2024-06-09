@@ -12,19 +12,19 @@
             
         </header>
         <div>
-            <p>{{ $t("assignment.header_1_1") }}</p>
+            <p>{{ $t("assignment.header_2_1") }}</p>
             <p>{{ this.phrase }}</p>
+            <p class="text sentence" >{{this.message}}</p>
         </div>
-        <div class="options">
-            <div v-for="(name, index) in this.options">
-                <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index , 'wrongAnswer': selectedParagraph === index & wrongAnswer }"
-                 @click="selectParagraph(index)">
-                {{ name }}
-            </p>
-            </div>
-        </div>
+        <p class="text errors" >
+            Errors number: {{this.numerrors}} 
+            Errors description:{{this.errors}}
+            Expected Sentence: {{ this.expectedSentence }}
+        </p>
+        
+        
         <!--When pressed first time starts recording, when pressed second time stops-->
-        <button class="buttonAudio" :disabled="disabledMic" @click="startRecordAudio" :class="{'clickable': recording}">
+        <button class="buttonAudio" @click="startRecordAudio" :class="{'clickable': recording}">
             <img  class="audioImg"  
             :src="recording ? imageRecording : imageNotRecording">
         </button>
@@ -42,19 +42,22 @@ import axios from "axios"
 export default {
     data() {
         return {
-            wrongAnswer: false,
             flag: null,
-            selectedParagraph: null,
             phrase: null,
-            options: null,
+            message: null,
             recording: false,
             imageNotRecording: '../../micro/microphone.png',
             imageRecording: '../../micro/listening.png',
             recorder:null,
             disabledMic: true,
-            disabledConfirm: true
+            disabledConfirm: true,
+            score: 0,
+            errors: "",
+            numerrors: 0,
+            expectedSentence: ""
         };
     },
+
     created(){
         this.flag = this.$route.params.language;
         this.src = '../../flags/' + this.flag + ".png";
@@ -65,76 +68,46 @@ export default {
     },
     methods: {  
         fetchPhrase(){
-        axios.get('http://127.0.0.1:5000/lev1/phrases', {params:{ex:"1"}})
+        axios.get('http://127.0.0.1:5000/lev2/phrases', {params:{ex:"1"}})
         .then(response => {
-        // do something with response.data
-         let dict = response.data;
-         this.phrase = dict['phrase']
-         this.options = Object.keys(dict)
-        .filter((key) => key!=='phrase')
-        .reduce((obj, key) => {
-            return Object.assign(obj, {
-            [key]: dict[key]
-            });
-        }, {});
+        // get phrase to translate
+         this.phrase = response.data
         })
         .catch(error => {
           console.error(error);
         });
         },
-
-        selectParagraph(index) {
-        this.selectedParagraph = this.selectedParagraph === index ? null : index;
-        this.disabledMic = this.selectedParagraph === null? true : false;
-        },
-
         goBack(){
         router.go(-1);
         },
-        checkAnswer(){
-            const answer = this.options[this.selectedParagraph]
-            axios.post('http://127.0.0.1:5000/lev1/ex1_2/check', {data: answer, ex: "1"})
-            .then(response => { 
-                console.log(response.data, answer)
-                if (response.data) {
-                    //if true the answer clicked was right
-                    this.wrongAnswer = false
-                }else{
-                    //false the answer clicked was wrong
-                    this.wrongAnswer = true
-                }
-            })
-            .catch(error => {
-                console.log(error)
-            });
-        },
         //function that prompts backend to record and gets the speech to text
         startRecordAudio(){
-            this.recording = true;
-            
-            axios.post('http://127.0.0.1:5000/lev1/ex1/record')
-            .then(response => { 
-                console.log(response.data)
-                this.stopRecordAudio()
-            })
-            .catch(error => {
-                console.log(error)
-            });
-        }, 
+        this.recording = true;
+        axios.post('http://127.0.0.1:5000/lev3/record')
+        .then(response => { 
+            this.stopRecordAudio()
+        })
+        .catch(error => {
+            console.log(error)
+        });
+        },  
         stopRecordAudio(){
             this.recording = false;
-            axios.get('http://127.0.0.1:5000/lev1/ex1/audio')
+            axios.get('http://127.0.0.1:5000/lev3/conversation')
             .then(response => { 
                 console.log(response.data)
-                this.disabledConfirm = false
-                this.checkAnswer()
+                this.disabledConfirm = false;
+                this.message = response.data["data"];
+                this.errors = response.data["errors"];
+                this.numerrors = response.data["numerrors"];
+                this.expectedSentence = response.data["expected"]
             })
             .catch(error => {
                 console.log(error)
             });
         },
         goOn(){
-            setTimeout(function(){router.replace({name:"lev1_2", params: this.flag})}, 1000)
+            setTimeout(function(){router.replace({name:"lev2_2", params: this.flag})}, 1000)
         }
     }
     };
@@ -143,7 +116,6 @@ export default {
 <style scoped>
 body{
     background-color: #FBF2D4;
-    
 }
 
 .options{
@@ -206,14 +178,28 @@ body{
     transform: scale(0.95);
     transition: transform 0.5s ease;
 }
-.wrongAnswer{
-    background-color: red;
-}
+
 .container{
     position:relative;
     margin:0cap;
 }
-
+.text{
+    width: 320px;
+    height: 50px;
+    background-color: white;
+    border-radius: 10px;
+    margin-left: 20px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    padding: 5px;
+}
+.text.sentence{
+    font-size: 20px;
+}
+.text.errors{
+    height: auto;
+    font-size: 20px;
+}
 .flag{
     position:absolute;
     display: inline;

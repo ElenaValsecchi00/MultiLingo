@@ -11,19 +11,18 @@
             </div>      
         </header>
         
-        <p>{{ $t("assignment.header_1_3") }}</p>
-        <div class="scrollable"> 
+        <p>{{ $t("assignment.header_03") }}</p>
+        <div class="scrollable" ref="scroll"> 
             <h3 class="text">{{ $t("assignment.header_3") }}</h3>
             <div v-for="(name, index) in this.conversation">
                 <h3 class="text" :class="{ 'answer': index % 2 == 0}">{{ name }}</h3> 
-        </div>
-             
+            </div>
         </div>
         
         <div class="message">
             <form>
-            <p class="textanswer" >{{this.message}}</p>
-            <a href="#" v-on:click="getNextQuestion()" id="submit">SUBMIT</a>
+            <input class="languageinput" v-model="message"></input>
+            <a class="send" href="#" v-on:click="getNextQuestion()" id="submit">SEND</a>
             </form>
         </div>
         <!--When pressed first time starts recording, when pressed second time stops-->
@@ -75,6 +74,10 @@ export default {
             .then(response => { 
                 console.log(response.data)
                 this.conversation.push(response.data)
+                this.message = null
+                this.$nextTick(() => {
+                    this.$refs.scroll.scrollTop = this.$refs.scroll.scrollHeight
+                })
                 router.go(-1);
             })
             .catch(error => {
@@ -98,7 +101,10 @@ export default {
             .then(response => { 
                 console.log(response.data)
                 this.disabledConfirm = false;
-                this.message = response.data;
+                this.message = response.data["data"];
+                this.$nextTick(() => {
+                    this.$refs.scroll.scrollTop = this.$refs.scroll.scrollHeight
+                })
             })
             .catch(error => {
                 console.log(error)
@@ -112,7 +118,18 @@ export default {
 body{
     background-color: #FBF2D4;
 }
-
+.send{
+    margin-right:55px
+}
+.languageinput{
+  border-radius: 10px;
+  top:200px;
+  left:30px;
+  width:250px;
+  height:70px;
+  text-align: center;
+  border-color: transparent;
+}
 #submit{
     text-align: right;
     position: relative;

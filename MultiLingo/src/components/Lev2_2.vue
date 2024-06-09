@@ -11,27 +11,29 @@
             </div>
             
         </header>
+        
         <div>
-            <p>{{ $t("assignment.header_1_1") }}</p>
-            <p>{{ this.phrase }}</p>
-        </div>
-        <div class="options">
-            <div v-for="(name, index) in this.options">
-                <p class="clickable-div" :class="{ 'clickable': selectedParagraph === index , 'wrongAnswer': selectedParagraph === index & wrongAnswer }"
-                 @click="selectParagraph(index)">
-                {{ name }}
+            <p>{{ $t("assignment.header_2_2") }}</p>
+
+            <button class="buttonAudio speaker" @click="startListening()" :class="{'clickable': listening}">
+            <img  class="audioImg"  
+            :src="listening ? imageListening : imageNotListening">
+            </button>
+            <p class="text sentence" >{{this.message}}</p>
+            <p class="text errors" >
+                Errors number: {{this.numerrors}} 
+                Errors description:{{this.errors}}
+                Expected Sentence: {{ this.expectedSentence }}
             </p>
-            </div>
         </div>
+        
         <!--When pressed first time starts recording, when pressed second time stops-->
-        <button class="buttonAudio" :disabled="disabledMic" @click="startRecordAudio" :class="{'clickable': recording}">
+        <button class="buttonAudio mic" :disabled="disabledMic" @click="startRecordAudio" :class="{'clickable': recording}">
             <img  class="audioImg"  
             :src="recording ? imageRecording : imageNotRecording">
         </button>
-        
         <button class="buttonConferma" :disabled="disabledConfirm" @click="goOn()">{{ $t("assignment.confirm") }}</button>
     
-        
     </body>
 </template>
   
@@ -42,99 +44,75 @@ import axios from "axios"
 export default {
     data() {
         return {
-            wrongAnswer: false,
+            message:null,
             flag: null,
-            selectedParagraph: null,
-            phrase: null,
-            options: null,
+            listening: false,
             recording: false,
+            imageNotListening: '../../audio/volumedown.png',
+            imageListening: '../../audio/volumeup.png',
             imageNotRecording: '../../micro/microphone.png',
             imageRecording: '../../micro/listening.png',
-            recorder:null,
             disabledMic: true,
-            disabledConfirm: true
+            disabledConfirm: true,
+            score: 0,
+            errors: null,
+            numerrors: 0,
+            expectedSentence: ""
         };
     },
+
     created(){
         this.flag = this.$route.params.language;
         this.src = '../../flags/' + this.flag + ".png";
-        this.fetchPhrase();
     },
     mounted() {
         
     },
     methods: {  
-        fetchPhrase(){
-        axios.get('http://127.0.0.1:5000/lev1/phrases', {params:{ex:"1"}})
-        .then(response => {
-        // do something with response.data
-         let dict = response.data;
-         this.phrase = dict['phrase']
-         this.options = Object.keys(dict)
-        .filter((key) => key!=='phrase')
-        .reduce((obj, key) => {
-            return Object.assign(obj, {
-            [key]: dict[key]
-            });
-        }, {});
-        })
-        .catch(error => {
-          console.error(error);
-        });
-        },
-
-        selectParagraph(index) {
-        this.selectedParagraph = this.selectedParagraph === index ? null : index;
-        this.disabledMic = this.selectedParagraph === null? true : false;
-        },
-
-        goBack(){
-        router.go(-1);
-        },
-        checkAnswer(){
-            const answer = this.options[this.selectedParagraph]
-            axios.post('http://127.0.0.1:5000/lev1/ex1_2/check', {data: answer, ex: "1"})
-            .then(response => { 
-                console.log(response.data, answer)
-                if (response.data) {
-                    //if true the answer clicked was right
-                    this.wrongAnswer = false
-                }else{
-                    //false the answer clicked was wrong
-                    this.wrongAnswer = true
-                }
+        startListening(){
+            this.disabledMic = false
+            this.listening = this.listening === false? true : false;
+            axios.get('http://127.0.0.1:5000/lev2/pronounce')
+            .then(response => {
+                console.log(response.data)
+                this.listening = false;
             })
             .catch(error => {
-                console.log(error)
+                console.error(error);
             });
         },
         //function that prompts backend to record and gets the speech to text
         startRecordAudio(){
             this.recording = true;
-            
-            axios.post('http://127.0.0.1:5000/lev1/ex1/record')
+            axios.post('http://127.0.0.1:5000/lev3/record')
             .then(response => { 
-                console.log(response.data)
                 this.stopRecordAudio()
             })
             .catch(error => {
                 console.log(error)
             });
-        }, 
+        },  
         stopRecordAudio(){
             this.recording = false;
-            axios.get('http://127.0.0.1:5000/lev1/ex1/audio')
+            axios.get('http://127.0.0.1:5000/lev3/conversation')
             .then(response => { 
                 console.log(response.data)
-                this.disabledConfirm = false
-                this.checkAnswer()
+                this.disabledConfirm = false;
+                this.message = response.data["data"];
+                this.errors = response.data["errors"];
+                this.numerrors = response.data["numerrors"]
+                this.expectedSentence = response.data["expected"]
             })
             .catch(error => {
                 console.log(error)
             });
         },
+        goBack(){
+        router.go(-1);
+        },
         goOn(){
-            setTimeout(function(){router.replace({name:"lev1_2", params: this.flag})}, 1000)
+            //***where*** 
+            setTimeout(function(){router.replace({name:"result2", params: this.flag })}, 1000)
         }
     }
     };
@@ -143,11 +121,27 @@ export default {
 <style scoped>
 body{
     background-color: #FBF2D4;
-    
 }
 
-.options{
-    overflow: scroll;
+.text{
+    width: 320;
+    height: 50px;
+    background-color: white;
+    border-radius: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 2px;
+    font-size: 20px;
+    padding:20px;
+}
+
+.text.sentence{
+    margin-top:160px;
+
+}
+.text.errors{
+    margin-top:20px;
+    height: auto;
 }
 
 .buttonConferma {
@@ -170,18 +164,14 @@ body{
     background-color: rgba(172, 160, 160, 0.806);
     cursor: not-allowed;
 }
-.buttonAudio:disabled{
-    background-color: rgba(172, 160, 160, 0.806);
-    cursor: not-allowed;
-}
+
 .buttonAudio{
     position:absolute;
     width: 50%;
     height: auto;
     text-align: center;
     left: 0; 
-    right: 0; 
-    bottom:100px;
+    right: 0;   
     margin-left: auto; 
     margin-right: auto; 
     background: #C3E986;
@@ -189,6 +179,20 @@ body{
     border-color: transparent;
     cursor: pointer;
 }
+
+.mic{
+    bottom:100px;
+}
+
+.speaker{
+    bottom:500px;
+}
+
+.buttonAudio:disabled{
+    background-color: rgba(172, 160, 160, 0.806);
+    cursor: not-allowed;
+}
+
 .audioImg{
     width:50%;
 }
@@ -206,9 +210,7 @@ body{
     transform: scale(0.95);
     transition: transform 0.5s ease;
 }
-.wrongAnswer{
-    background-color: red;
-}
+
 .container{
     position:relative;
     margin:0cap;
