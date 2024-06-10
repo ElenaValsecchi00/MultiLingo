@@ -53,12 +53,13 @@ export default{
     },
     goEx(i){
         if(i === 2){
-            router.push({name:"lev" + i + "choice", params: this.flag});
+            router.push({name:"lev" + i + "choice"});
         }else{
-            router.push({name:"lev" + i, params: this.flag});
+            router.push({name:"lev" + i});
         }
         
     }
+    
 }
 };
 

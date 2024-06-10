@@ -57,6 +57,51 @@ export default {
                 
                 }
               }
+              else if (response.data["url"]=="level one")
+              {
+                var routName =router.currentRoute.value.name
+                console.log(routName, router.getRoutes())
+                for(let i=0; i<router.getRoutes().length; i++)
+                {
+                  var r = router.getRoutes()[i];
+                  if(r.name==routName){
+                    console.log(r.components.default.methods)
+                    var goEx = r.components.default.methods.goEx;
+                    goEx(1);
+                  }
+                
+                }
+              }
+              else if (response.data["url"]=="level two")
+              {
+                var routName =router.currentRoute.value.name
+                console.log(routName, router.getRoutes())
+                for(let i=0; i<router.getRoutes().length; i++)
+                {
+                  var r = router.getRoutes()[i];
+                  if(r.name==routName){
+                    console.log(r.components.default.methods)
+                    var goEx = r.components.default.methods.goEx;
+                    goEx(2);
+                  }
+                
+                }
+              }
+              else if (response.data["url"]=="level three")
+              {
+                var routName =router.currentRoute.value.name
+                console.log(routName, router.getRoutes())
+                for(let i=0; i<router.getRoutes().length; i++)
+                {
+                  var r = router.getRoutes()[i];
+                  if(r.name==routName){
+                    console.log(r.components.default.methods)
+                    var goEx = r.components.default.methods.goEx;
+                    goEx(3);
+                  }
+                
+                }
+              }
               this.listen_in_back()
           }
           catch(error){

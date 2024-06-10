@@ -178,13 +178,22 @@ def callback(recognizer, audio):  # this is called from the background thread
         print(speech_as_text)
         confirm_trigger = "conferma" if language=="it" else "confirma" if language=="es" else "confirm" if language=="en" else "confirme"
         back_trigger = "indietro" if language=="it" else "atras" if language=="es" else "back" if language=="en" else "derrière"
-          
+        lev1_trigger = "livello uno" if language=="it" else "nivel uno" if language=="es" else "level one" if language=="en" else "niveau un"
+        lev2_trigger = "livello due" if language=="it" else "nivel dos" if language=="es" else "level two" if language=="en" else "niveau deux"
+        lev3_trigger = "livello tre" if language=="it" else "nivel tres" if language=="es" else "level three" if language=="en" else "niveau trois"
+       
         # Look for your "trigger" keyword in speech_as_text
         if confirm_trigger in speech_as_text.lower():
             trigger("confirm")
             #go to next page
         elif back_trigger in speech_as_text.lower():
             trigger("back")
+        elif lev1_trigger in speech_as_text.lower():
+            trigger("level one")
+        elif lev2_trigger in speech_as_text.lower():
+            trigger("level two")
+        elif lev3_trigger in speech_as_text.lower():
+            trigger("level three")
     except sr.UnknownValueError:
         print("Oops! Didn't catch that")
 
@@ -208,7 +217,7 @@ def start_recognizer():
     while back.back_active:
         time.sleep(1.0) # we're still listening even though the main thread is blocked
     #it returns only when back_active is set to false
-    return jsonify({"url":trigger_word})
+    return jsonify({"url":trigger_word, "language": language})
 
 @app.route("/lev2/getLanguage", methods=["POST"])
 def get_language():

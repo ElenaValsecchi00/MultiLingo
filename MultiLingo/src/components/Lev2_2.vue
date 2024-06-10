@@ -15,12 +15,12 @@
         <div>
             <p>{{ $t("assignment.header_2_2") }}</p>
 
-            <button class="buttonAudio speaker" @click="startListening()" :class="{'clickable': listening}">
+            <button class="buttonAudio" @click="startListening()" :class="{'clickable': listening}">
             <img  class="audioImg"  
             :src="listening ? imageListening : imageNotListening">
             </button>
-            <p class="text sentence" >{{this.message}}</p>
-            <p class="text errors" >
+            <p class="text sentence" :class="{ 'hidden': hidetext}">{{this.message}}</p>
+            <p class="text errors" :class="{ 'hidden': hidetext}" >
                 Errors number: {{this.numerrors}} 
                 Errors description:{{this.errors}}
                 Expected Sentence: {{ this.expectedSentence }}
@@ -45,6 +45,7 @@ export default {
     data() {
         return {
             message:null,
+            hidetext: true,
             flag: null,
             listening: false,
             recording: false,
@@ -97,6 +98,7 @@ export default {
             axios.get('http://127.0.0.1:5000/lev3/conversation')
             .then(response => { 
                 console.log(response.data)
+                this.hidetext = false;
                 this.disabledConfirm = false;
                 this.message = response.data["data"];
                 this.errors = response.data["errors"];
@@ -184,10 +186,6 @@ body{
     bottom:100px;
 }
 
-.speaker{
-    bottom:500px;
-}
-
 .buttonAudio:disabled{
     background-color: rgba(172, 160, 160, 0.806);
     cursor: not-allowed;
@@ -223,6 +221,9 @@ body{
     right:0;
     margin-top: 1cap;
     margin-right: 1cap;
+}
+.hidden{
+    visibility: hidden !important
 }
 </style>
 
