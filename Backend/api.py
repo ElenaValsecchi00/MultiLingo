@@ -178,9 +178,9 @@ def callback(recognizer, audio):  # this is called from the background thread
         print(speech_as_text)
         confirm_trigger = "conferma" if language=="it" else "confirma" if language=="es" else "confirm" if language=="en" else "confirme"
         back_trigger = "indietro" if language=="it" else "atras" if language=="es" else "back" if language=="en" else "derrière"
-        lev1_trigger = "livello uno" if language=="it" else "nivel uno" if language=="es" else "level one" if language=="en" else "niveau un"
-        lev2_trigger = "livello due" if language=="it" else "nivel dos" if language=="es" else "level two" if language=="en" else "niveau deux"
-        lev3_trigger = "livello tre" if language=="it" else "nivel tres" if language=="es" else "level three" if language=="en" else "niveau trois"
+        lev1_trigger = "livello 1" if language=="it" else "nivel uno" if language=="es" else "level one" if language=="en" else "niveau 1"
+        lev2_trigger = "livello 2" if language=="it" else "nivel dos" if language=="es" else "level two" if language=="en" else "niveau 2"
+        lev3_trigger = "livello 3" if language=="it" else "nivel tres" if language=="es" else "level three" if language=="en" else "niveau 3"
        
         # Look for your "trigger" keyword in speech_as_text
         if confirm_trigger in speech_as_text.lower():
