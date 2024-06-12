@@ -21,6 +21,10 @@ from collections import Counter
 
 tool = language_tool_python.LanguageTool('en')
 keywords = [("confirm", 1), ("back", 1), ]
+voices = {"en":3,
+          "it":0,
+          "fr":2,
+          "es":1}
 
 translator = Translator(service_urls=['translate.googleapis.com'])
 rec = sr.Recognizer()
@@ -300,6 +304,7 @@ def prononuce_phrase():
     #pronounce the sentence
     engine = pyttsx3.init()
     engine.setProperty('rate', 150)
+    engine.setProperty('voice', engine.getProperty("voices")[voices[language]].id)
     engine.say(expected_sen)
     engine.runAndWait()
     return jsonify("success")
@@ -309,6 +314,7 @@ def pron_phrase_2():
     #pronounce the sentence
     engine = pyttsx3.init()
     engine.setProperty('rate', 150)
+    engine.setProperty('voice', engine.getProperty("voices")[voices[language]].id)
     index = random.randrange(0,len(lev2_phrases["1"]))
     phrase = lev2_phrases["1"][index] 
     global expected_sen
