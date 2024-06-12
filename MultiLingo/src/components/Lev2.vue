@@ -14,9 +14,9 @@
         <div>
             <p>{{ $t("assignment.header_2_1") }}</p>
             <p>{{ this.phrase }}</p>
-            <p class="text sentence" >{{this.message}}</p>
+            <p class="text sentence" :class="{ 'hidden': hidetext}" >{{this.message}}</p>
         </div>
-        <p class="text errors" >
+        <p class="text errors" :class="{ 'hidden': hidetext}">
             Errors number: {{this.numerrors}} 
             Errors description:{{this.errors}}
             Expected Sentence: {{ this.expectedSentence }}
@@ -53,6 +53,7 @@ export default {
             disabledConfirm: true,
             score: 0,
             errors: "",
+            hidetext: true,
             numerrors: 0,
             expectedSentence: ""
         };
@@ -96,6 +97,7 @@ export default {
             axios.get('http://127.0.0.1:5000/lev3/conversation')
             .then(response => { 
                 console.log(response.data)
+                this.hidetext = false,
                 this.disabledConfirm = false;
                 this.message = response.data["data"];
                 this.errors = response.data["errors"];
@@ -207,6 +209,9 @@ body{
     right:0;
     margin-top: 1cap;
     margin-right: 1cap;
+}
+.hidden{
+    visibility: hidden !important
 }
 </style>
 

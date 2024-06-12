@@ -141,7 +141,7 @@ body{
     width:30%;
 }
 .scrollable{
-    height:400px;
+    height:320px;
     overflow: auto;
 }
 
