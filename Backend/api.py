@@ -58,7 +58,8 @@ lev1_options = {"1":[("are", "have"),("was", "have"), ("there", "these"), ("a", 
                      ("due", "of", "these","dude"),
                      ("that", "could", "pounding", "deal","He")],
                 "2":[("yellow", "red"),("enjoy","don't like"), ("child","cat")]}
-lev2_phrases = {"1": [("This hat really suits me"),("I would love to go out with you"), ("I wish I could speak French")]}
+lev2_phrases = {"1": [("This hat really suits me"),("I would love to go out with you")],
+                "2":[("I wish I could speak French"),("Are you mad?")]}
 
 UPLOAD_FOLDER = 'audios'
 
@@ -315,8 +316,8 @@ def pron_phrase_2():
     engine = pyttsx3.init()
     engine.setProperty('rate', 150)
     engine.setProperty('voice', engine.getProperty("voices")[voices[language]].id)
-    index = random.randrange(0,len(lev2_phrases["1"]))
-    phrase = lev2_phrases["1"][index] 
+    index = random.randrange(0,len(lev2_phrases["2"]))
+    phrase = lev2_phrases["2"][index] 
     global expected_sen
     expected_sen = translator.translate(phrase,src="en", dest=language).text
     phrase = translator.translate(phrase,src="en", dest=startingLanguage).text
