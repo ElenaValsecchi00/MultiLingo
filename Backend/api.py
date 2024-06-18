@@ -58,7 +58,8 @@ lev1_options = {"1":[("are", "have"),("was", "have"), ("there", "these"), ("a", 
                      ("due", "of", "these","dude"),
                      ("that", "could", "pounding", "deal","He")],
                 "2":[("yellow", "red"),("enjoy","don't like"), ("child","cat")]}
-lev2_phrases = {"1": [("This hat really suits me"),("I would love to go out with you"), ("I wish I could speak French")]}
+lev2_phrases = {"1": [("This hat really suits me"),("I would love to go out with you")],
+                "2":[("I wish I could speak French"),("Are you mad?")]}
 
 UPLOAD_FOLDER = 'audios'
 
@@ -181,7 +182,7 @@ def callback(recognizer, audio):  # this is called from the background thread
         speech_as_text = recognizer.recognize_google(audio, language = language)
         print(speech_as_text)
         confirm_trigger = "conferma" if language=="it" else "confirma" if language=="es" else "confirm" if language=="en" else "confirme"
-        back_trigger = "indietro" if language=="it" else "atras" if language=="es" else "back" if language=="en" else "derrière"
+        back_trigger = "indietro" if language=="it" else "atrás" if language=="es" else "back" if language=="en" else "derrière"
         lev1_trigger = "livello 1" if language=="it" else "nivel uno" if language=="es" else "level one" if language=="en" else "niveau 1"
         lev2_trigger = "livello 2" if language=="it" else "nivel dos" if language=="es" else "level two" if language=="en" else "niveau 2"
         lev3_trigger = "livello 3" if language=="it" else "nivel tres" if language=="es" else "level three" if language=="en" else "niveau 3"
@@ -314,9 +315,9 @@ def pron_phrase_2():
     #pronounce the sentence
     engine = pyttsx3.init()
     engine.setProperty('rate', 150)
-    engine.setProperty('voice', engine.getProperty("voices")[voices[language]].id)
-    index = random.randrange(0,len(lev2_phrases["1"]))
-    phrase = lev2_phrases["1"][index] 
+    engine.setProperty('voice', engine.getProperty("voices")[voices[startingLanguage]].id)
+    index = random.randrange(0,len(lev2_phrases["2"]))
+    phrase = lev2_phrases["2"][index] 
     global expected_sen
     expected_sen = translator.translate(phrase,src="en", dest=language).text
     phrase = translator.translate(phrase,src="en", dest=startingLanguage).text
@@ -345,7 +346,7 @@ def handle_input():
     phrase = phrase["data"]
     if phrase==None:
         phrase=""
-    if phrase.lower() in ["bye", "goodbye"]:
+    if phrase.lower() in ["bye", "goodbye", "have a nice day"]:
         return jsonify("Goodbye!")
     else:
         doc = nlp(translator.translate(phrase.lower(),src=language, dest="en").text)
